@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#12100E">
+<title>Lane 1 — Sprint Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12100E;            /* near-black track night */
+    --surface:#1B1815;        /* card surface */
+    --surface-2:#241F1B;      /* raised */
+    --clay:#C9462C;           /* track clay red */
+    --clay-bright:#E85A34;    /* accent hot */
+    --lane:#EDE7DD;           /* lane line cream */
+    --muted:#8B8178;          /* muted text */
+    --line:#332C26;           /* hairline */
+    --hard:#E85A34;           /* quality/hard day */
+    --easy:#4FA88A;           /* tempo/easy day */
+    --meet:#E8B23A;           /* race day gold */
+    --ok:#4FA88A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--ink);color:var(--lane);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{min-height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 64px}
+
+  /* ---- Header / lane identity ---- */
+  .masthead{position:relative;padding:22px 0 18px;border-bottom:2px solid var(--clay);margin-bottom:22px}
+  .lane-tag{display:flex;align-items:baseline;gap:10px}
+  .lane-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.14em;color:var(--ink);background:var(--clay);padding:3px 9px;border-radius:2px;text-transform:uppercase}
+  .lane-sub{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(38px,12vw,52px);line-height:.92;letter-spacing:-.01em;margin-top:12px;text-transform:uppercase}
+  h1 .accent{color:var(--clay-bright)}
+
+  /* ---- Date input ---- */
+  .setup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:22px}
+  .setup label{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .date-row{display:flex;gap:10px}
+  input[type=date]{flex:1;background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'Inter';font-size:17px;font-weight:600;padding:14px 14px;border-radius:10px;min-height:52px;-webkit-appearance:none;appearance:none}
+  input[type=date]:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(201,70,44,.25)}
+
+  /* ---- Countdown strip ---- */
+  .status{display:none;margin-bottom:20px}
+  .status.show{display:block;animation:rise .4s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .countbar{display:flex;align-items:stretch;gap:2px;background:var(--line);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  .count-cell{background:var(--surface);padding:14px 12px;flex:1;text-align:center}
+  .count-cell .big{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:34px;line-height:1;color:var(--clay-bright)}
+  .count-cell .lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .count-cell.phase .big{font-size:19px;color:var(--lane);padding-top:4px}
+  .count-cell.phase{flex:1.7;display:flex;flex-direction:column;justify-content:center}
+  .blurb{background:var(--surface-2);border-left:3px solid var(--clay);border-radius:0 10px 10px 0;padding:13px 15px;margin-top:12px;font-size:14.5px;line-height:1.5;color:#D8CFC4}
+
+  /* ---- Week header ---- */
+  .weekhead{display:flex;align-items:center;justify-content:space-between;margin:26px 2px 14px}
+  .weekhead h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
+  .legend{display:flex;gap:12px;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.03em}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .dot.hard{background:var(--hard)} .dot.easy{background:var(--easy)} .dot.meet{background:var(--meet)}
+
+  /* ---- Day cards ---- */
+  .days{display:flex;flex-direction:column;gap:12px}
+  .day{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .day-top{display:flex;align-items:center;gap:13px;padding:14px 15px 12px}
+  .day-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+  .day.hard .day-num{background:rgba(232,90,52,.14);color:var(--clay-bright);border-color:rgba(232,90,52,.35)}
+  .day.easy .day-num{background:rgba(79,168,138,.12);color:var(--easy);border-color:rgba(79,168,138,.3)}
+  .day.meet .day-num{background:rgba(232,178,58,.14);color:var(--meet);border-color:rgba(232,178,58,.4)}
+  .day-label{flex:1}
+  .day-kind{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;line-height:1}
+  .day-pill{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:5px;display:inline-block}
+  .day.hard .day-pill{background:rgba(232,90,52,.16);color:var(--clay-bright)}
+  .day.easy .day-pill{background:rgba(79,168,138,.14);color:var(--easy)}
+  .day.meet .day-pill{background:rgba(232,178,58,.16);color:var(--meet)}
+  .day-body{border-top:1px solid var(--line)}
+  .seg{padding:13px 15px;display:flex;gap:12px}
+  .seg + .seg{border-top:1px dashed var(--line)}
+  .seg-ico{flex:none;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px}
+  .seg-ico.track{background:rgba(201,70,44,.15)}
+  .seg-ico.gym{background:rgba(139,129,120,.15)}
+  .seg-txt{flex:1}
+  .seg-h{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .seg-c{font-size:14.5px;line-height:1.5;color:#E7DFD5}
+
+  /* ---- footer note ---- */
+  .note{margin-top:24px;font-size:12.5px;line-height:1.6;color:var(--muted);padding:14px 15px;background:var(--surface);border-radius:10px;border:1px solid var(--line)}
+  .note b{color:#C0B6AB;font-weight:600}
+  .spacer-rule{margin-top:8px;height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 8px,transparent 8px 16px)}
+  .empty{color:var(--muted);text-align:center;padding:40px 20px;font-size:15px;line-height:1.6}
+  ::selection{background:var(--clay);color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="lane-tag">
+      <span class="lane-num">Lane 1</span>
+      <span class="lane-sub">Sprint Build</span>
+    </div>
+    <h1>This Week's<br><span class="accent">Session</span></h1>
+  </header>
+
+  <section class="setup">
+    <label for="date">Next Big Meet</label>
+    <div class="date-row">
+      <input type="date" id="date" />
+    </div>
+  </section>
+
+  <section class="status" id="status">
+    <div class="countbar">
+      <div class="count-cell"><div class="big" id="cWeeks">—</div><div class="lbl">Weeks Out</div></div>
+      <div class="count-cell"><div class="big" id="cDays">—</div><div class="lbl">Days Out</div></div>
+      <div class="count-cell phase"><div class="big" id="cPhase">—</div><div class="lbl">Current Block</div></div>
+    </div>
+    <div class="blurb" id="blurb"></div>
+  </section>
+
+  <div id="weekWrap"></div>
+
+  <div class="note" id="foot" style="display:none">
+    <b>How to read this:</b> Each card is one training day — the track work up top, the gym / adjunct work below it. Keep the two hard days (orange) at least 48 hours apart; you can move days around to fit your week as long as no two hard days touch.
+    <div class="spacer-rule"></div>
+    <div style="margin-top:10px"><b>One model, not gospel.</b> This follows a short-to-long sprint model (tempo-heavy base, sharpening near meets). It's a solid starting point — adjust with your coach for how you actually recover.</div>
+  </div>
+</div>
+
+<script>
+const DATA = {"phases": [{"name": "General Prep I", "min": 20, "max": 9999, "blurb": "Off-season base. Almost no fast running — the week is built on tempo volume, general strength, and drills. You're building the engine and the body that will hold up later.", "days": [{"n": 1, "typeRaw": "STR+ACC", "run": "SHORT speed only: Acceleration 4–6×20–30m from crouch @95–100%, full recovery (≈120–180m total — this is the ONLY fast running today)", "adj": "Hypertrophy lift (main block): squat 3–4×6–10 @60–75%, RDL/Nordic 3×6–10, split squat 2×8; then in-place plyos (line hops, pogos) 100–150 contacts"}, {"n": 2, "typeRaw": "TEMPO", "run": "Extensive tempo: 2×(100-200-300-200-100) @<70% on grass (~1800–2000m), short walk/jog recovery", "adj": "General strength circuit (lunges, push-ups, prisoner squats, back raises) ×3; med ball 6–10 throws low intent; mobility"}, {"n": 3, "typeRaw": "HILLS+STR", "run": "Hills for acceleration (Francis GPP staple — velocity naturally submax, lower hamstring risk): 6–8×20–30m @100% effort, walk-down recovery", "adj": "Hypertrophy lift (lower B): trap-bar DL or squat variation 3×6–10, hip thrust 3×8, calf 3×10; box jump 2×5 (short-response plyo)"}, {"n": 4, "typeRaw": "TEMPO", "run": "Extensive tempo: 10–12×100m walk-back @<70% on grass (~1000–1200m)", "adj": "GS bodyweight circuit ×2–3; hurdle mobility (over/unders); med ball series low intent; drills (A-march, A-skip, dribbles)"}, {"n": 5, "typeRaw": "TEMPO/OFF", "run": "Easy tempo or off: 8×100m @<70% + movement-quality drills, OR full rest/cross-train", "adj": "Mobility, tissue care, core. No fatigue. Optional light in-place plyos."}]}, {"name": "General Prep II", "min": 12, "max": 19, "blurb": "Still base-focused, but max velocity is introduced in small doses. Strength goes heavier. Tempo still carries most of the running volume.", "days": [{"n": 1, "typeRaw": "STR+ACC", "run": "SHORT speed only: Acceleration 4×10m + 4×20m + 3×30m from crouch @95–100%, full recovery (≈270m total — the only fast running today)", "adj": "Max-strength lift begins: trap-bar DL 3–5×3–5 @80–90%, squat 3×5; then depth jump 1×5×2 + box jump 2–3×3–5 (short-response plyos)"}, {"n": 2, "typeRaw": "TEMPO", "run": "Extensive tempo: 2×(100-200-300-200-100) @<70% on grass (~1800–2000m)", "adj": "GS circuit ×2–3; med ball 8–10 throws low intent; hurdle mobility; drills"}, {"n": 3, "typeRaw": "MAXV+STR", "run": "SHORT max-velocity (introduced this block): 4–6×(20m build+10m fly) @95–100%, full recovery (~4 min) (≈180m held-velocity — kept small)", "adj": "Max-strength lift (lower B): squat or DL 3–5×3–5 @80–90%, hip thrust 3×5, calf 3×8; hurdle hops 2×5"}, {"n": 4, "typeRaw": "TEMPO", "run": "Extensive tempo: 10–15×100m walk-back @<70% on grass (~1000–1500m)", "adj": "GS bodyweight circuit ×2–3; med ball series; mobility; A-series drills"}, {"n": 5, "typeRaw": "TEMPO/OFF", "run": "Easy tempo or off: 8–10×100m @<70% + drills, OR rest/cross-train", "adj": "Isos calf/soleus 1–2×20–30s @RPE 5–6; mobility/circuit. No fatigue."}]}, {"name": "Specific Prep", "min": 6, "max": 11, "blurb": "The switch flips toward race speed. Real speed-endurance work appears, tempo starts to drop, and the sessions get sharper.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Max Velocity: 5–6×(20m build + 10m fly) @95–100%, full recovery", "adj": "Box jump 2–3×2–3 fast; partial squat 2×2–3 @60–75% fast; med ball 2×3–4; calf iso 2×20–30s"}, {"n": 2, "typeRaw": "LNL", "run": "Extensive tempo: 10×100m @<70% (1000–4000m/wk, reducing)", "adj": "Isos, calf/soleus/tibialis, mobility/tissue care 1–2×20–30s @RPE 5–6"}, {"n": 3, "typeRaw": "HNL", "run": "Acceleration / Race Model: 3×(3×30m) or 4×40–50m from blocks @95–100%", "adj": "Box jump 2–3×2–3 fast; partial squat 2×2–3 @60–75%; med ball 2×3–4; calf iso 2×20–30s"}, {"n": 4, "typeRaw": "LNL", "run": "Extensive tempo: 8×100m @<70% + mobility", "adj": "Isos, mobility/tissue care."}, {"n": 5, "typeRaw": "HNL", "run": "Speed/Specific Endurance (200/400): 2×60+2×80+2×100m (≈480m) @95–100%, 5–8 min rest", "adj": "Box jump 2×2–3 fast; med ball 2×3; calf iso 2×20–30s (light, post-SE)"}]}, {"name": "Early Competition / Pre-Comp", "min": 3, "max": 5, "blurb": "Race-sharpening. Speed-dominant week, one quality category per session, and meets start replacing a hard day.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Max Velocity: 4–5×(20m build + 10m fly) @95–100%, full recovery", "adj": "Box jump 2×2–3; med ball 2×3; no new exercises this close to comp"}, {"n": 2, "typeRaw": "LNL", "run": "Extensive tempo: 8–10×100m @<70% (recovery role) + mobility", "adj": "Isos, mobility, tissue care 1–2×20–30s @RPE 5–6"}, {"n": 3, "typeRaw": "HNL", "run": "Race Modelling: 3–4×40m from 3-point/blocks @95–100% (or SE 3×150–200m for 200/400)", "adj": "Box jump 2×2–3; med ball 2×3"}, {"n": 4, "typeRaw": "LNL", "run": "Easy tempo / recovery: 6–8×100m @<70% + hurdle mobility", "adj": "Isos, mobility. No fatigue."}, {"n": 5, "typeRaw": "MEET", "run": "Race replaces one HNL session most weeks (counts as high-CNS for 48h spacing)", "adj": "Pre-meet only: light activation, 2–3 strides"}]}, {"name": "Main Competition", "min": 1, "max": 2, "blurb": "Compete. Low volume, crisp quality, and the meet is the main hard effort of the week. Everything else keeps you fresh.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Acceleration: 4–6×20–30m from crouch @95–100%, full recovery (or Max-V 3–4×build+fly)", "adj": "Power only: box jump 2–3×2–3; partial squat 2×2–3 @60–75% fast; med ball 2×3–4; calf iso 2×20–30s"}, {"n": 2, "typeRaw": "LNL", "run": "Recovery tempo: 6–8×100m @<70%, protect freshness", "adj": "Isos, calf/soleus/tibialis, mobility 1–2×20–30s @RPE 5–6"}, {"n": 3, "typeRaw": "LNL", "run": "Easy movement / mobility, 2–3 buildups", "adj": "Mobility, tissue care. No fatigue."}, {"n": 4, "typeRaw": "MEET", "run": "RACE — the week's second high-CNS stimulus (48h+ from the HNL day)", "adj": "Pre-meet: warmup + 2×30m buildups + 1–2 starts, done in 40 min"}]}, {"name": "Championship / Peak", "min": 0, "max": 0, "blurb": "Taper and peak. Minimal volume, only rehearsed work, maximum freshness for the biggest race.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Day −10/−8: Acceleration 3–4×20–30m from crouch @95–100%, full recovery", "adj": "Light activation only. Med ball 1×3 optional. No soreness."}, {"n": 2, "typeRaw": "LNL", "run": "Recovery tempo: 0–1000m/wk @<70% only + mobility", "adj": "Isos/mobility, light touch 1×20–30s @RPE 4–5"}, {"n": 3, "typeRaw": "HNL", "run": "Day −6/−4: Race Modelling 2–3×40m from 3-point @95–100%", "adj": "Light activation only. No new exercises."}, {"n": 4, "typeRaw": "LNL", "run": "Day −2 pre-meet: 2×30m buildups + 1–2 starts, done in 40 min", "adj": "Mobility only. Sleep priority."}, {"n": 5, "typeRaw": "MEET", "run": "RACE DAY", "adj": "—"}]}], "typeMap": {"STR+ACC": ["Strength + Short Accel", "hard"], "HILLS+STR": ["Hills + Strength", "hard"], "MAXV+STR": ["Max Velocity + Strength", "hard"], "HNL": ["Speed / Quality", "hard"], "TEMPO": ["Tempo", "easy"], "LNL": ["Tempo / Recovery", "easy"], "TEMPO/OFF": ["Tempo or Rest", "easy"], "MEET": ["Race Day", "meet"]}};
+
+function phaseFor(weeksOut){
+  for(const p of DATA.phases){ if(weeksOut>=p.min && weeksOut<=p.max) return p; }
+  return DATA.phases[DATA.phases.length-1];
+}
+function kindOf(typeRaw){
+  const m = DATA.typeMap[typeRaw];
+  return m ? {label:m[0], cat:m[1]} : {label:typeRaw, cat:'easy'};
+}
+function fmtInt(n){ return n<0?0:n; }
+
+const el = id => document.getElementById(id);
+const dateInput = el('date');
+
+// default: 12 weeks out from today, to show a meaningful week on first open
+(function seed(){
+  const d = new Date(); d.setDate(d.getDate() + 12*7);
+  dateInput.value = d.toISOString().slice(0,10);
+})();
+
+function render(){
+  const val = dateInput.value;
+  if(!val){ el('status').classList.remove('show'); el('weekWrap').innerHTML=''; el('foot').style.display='none'; return; }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const meet = new Date(val+'T00:00:00');
+  const msDay = 86400000;
+  const daysOut = Math.round((meet - today)/msDay);
+  const weeksOut = Math.max(0, Math.ceil(daysOut/7));
+
+  el('status').classList.add('show');
+
+  if(daysOut < 0){
+    el('cWeeks').textContent='—'; el('cDays').textContent='—'; el('cPhase').textContent='Past';
+    el('blurb').textContent='That date has already passed. Pick your next meet to see this week\u2019s plan.';
+    el('weekWrap').innerHTML='<div class="empty">Set a meet date in the future to load your week.</div>';
+    el('foot').style.display='none';
+    return;
+  }
+
+  const p = phaseFor(weeksOut);
+  el('cWeeks').textContent = fmtInt(weeksOut);
+  el('cDays').textContent = fmtInt(daysOut);
+  el('cPhase').textContent = p.name;
+  el('blurb').textContent = p.blurb;
+
+  let hardCount = 0;
+  const cards = p.days.map(d=>{
+    const k = kindOf(d.typeRaw);
+    if(k.cat==='hard') hardCount++;
+    const trackSeg = `<div class="seg">
+        <div class="seg-ico track">\u{1F3C3}</div>
+        <div class="seg-txt"><div class="seg-h">Track</div><div class="seg-c">${d.run}</div></div>
+      </div>`;
+    const gymSeg = (d.adj && d.adj.trim()!=='\u2014') ? `<div class="seg">
+        <div class="seg-ico gym">\u{1F3CB}</div>
+        <div class="seg-txt"><div class="seg-h">Gym / Adjunct</div><div class="seg-c">${d.adj}</div></div>
+      </div>` : '';
+    return `<article class="day ${k.cat}">
+      <div class="day-top">
+        <div class="day-num">${d.n}</div>
+        <div class="day-label">
+          <div class="day-kind">${k.label}</div>
+          <span class="day-pill">${k.cat==='hard'?'Hard day':k.cat==='meet'?'Race':'Easy day'}</span>
+        </div>
+      </div>
+      <div class="day-body">${trackSeg}${gymSeg}</div>
+    </article>`;
+  }).join('');
+
+  el('weekWrap').innerHTML = `
+    <div class="weekhead">
+      <h2>${p.days.length}-Day Week</h2>
+      <div class="legend">
+        <span><i class="dot hard"></i>Hard</span>
+        <span><i class="dot easy"></i>Easy</span>
+        <span><i class="dot meet"></i>Race</span>
+      </div>
+    </div>
+    <div class="days">${cards}</div>`;
+  el('foot').style.display='block';
+}
+
+dateInput.addEventListener('change', render);
+dateInput.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
