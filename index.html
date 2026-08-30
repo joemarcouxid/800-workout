@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#12100E">
-<title>Lane 1 — Sprint Training</title>
+<title>Lane 1 — 800 Build</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#12100E;            /* near-black track night */
@@ -18,10 +18,11 @@
     --lane:#EDE7DD;           /* lane line cream */
     --muted:#8B8178;          /* muted text */
     --line:#332C26;           /* hairline */
-    --hard:#E85A34;           /* quality/hard day */
-    --easy:#4FA88A;           /* tempo/easy day */
+    --speed:#E85A34;          /* speed day  */
+    --engine:#4A93BF;         /* engine day (aerobic quality) */
+    --easy:#4FA88A;           /* easy day */
     --meet:#E8B23A;           /* race day gold */
-    --ok:#4FA88A;
+    --off:#6E655D;            /* rest day */
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--ink);color:var(--lane);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -36,63 +37,95 @@
   h1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(38px,12vw,52px);line-height:.92;letter-spacing:-.01em;margin-top:12px;text-transform:uppercase}
   h1 .accent{color:var(--clay-bright)}
 
-  /* ---- Date input ---- */
-  .setup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:22px}
+  /* ---- Setup ---- */
+  .setup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:14px}
   .setup label{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-  .date-row{display:flex;gap:10px}
-  input[type=date]{flex:1;background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'Inter';font-size:17px;font-weight:600;padding:14px 14px;border-radius:10px;min-height:52px;-webkit-appearance:none;appearance:none}
+  input[type=date]{width:100%;background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'Inter';font-size:17px;font-weight:600;padding:14px;border-radius:10px;min-height:52px;-webkit-appearance:none;appearance:none}
   input[type=date]:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(201,70,44,.25)}
 
-  /* ---- Countdown strip ---- */
-  .status{display:none;margin-bottom:20px}
-  .status.show{display:block;animation:rise .4s ease}
-  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .countbar{display:flex;align-items:stretch;gap:2px;background:var(--line);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
-  .count-cell{background:var(--surface);padding:14px 12px;flex:1;text-align:center}
-  .count-cell .big{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:34px;line-height:1;color:var(--clay-bright)}
-  .count-cell .lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
-  .count-cell.phase .big{font-size:19px;color:var(--lane);padding-top:4px}
-  .count-cell.phase{flex:1.7;display:flex;flex-direction:column;justify-content:center}
-  .blurb{background:var(--surface-2);border-left:3px solid var(--clay);border-radius:0 10px 10px 0;padding:13px 15px;margin-top:12px;font-size:14.5px;line-height:1.5;color:#D8CFC4}
+  details.prs{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:22px;overflow:hidden}
+  details.prs summary{list-style:none;cursor:pointer;padding:16px;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  details.prs summary::-webkit-details-marker{display:none}
+  details.prs summary:after{content:'+';font-size:20px;color:var(--clay-bright)}
+  details.prs[open] summary:after{content:'\2013'}
+  details.prs summary:focus-visible{outline:2px solid var(--clay-bright);outline-offset:-2px}
+  .prbody{padding:0 16px 16px}
+  .prrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+  .prrow span{font-size:15px}
+  .prrow input{width:104px;background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'IBM Plex Mono',monospace;font-size:15px;padding:10px;border-radius:8px;text-align:right}
+  .prrow input:focus{outline:none;border-color:var(--clay)}
+  .prhint{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.5}
 
-  /* ---- Week header ---- */
-  .weekhead{display:flex;align-items:center;justify-content:space-between;margin:26px 2px 14px}
-  .weekhead h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
-  .legend{display:flex;gap:12px;flex-wrap:wrap}
-  .legend span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.03em}
-  .dot{width:9px;height:9px;border-radius:50%}
-  .dot.hard{background:var(--hard)} .dot.easy{background:var(--easy)} .dot.meet{background:var(--meet)}
+  /* ---- Countbar ---- */
+  .status{display:none;margin-bottom:22px}
+  .status.show{display:block}
+  .countbar{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .count-cell{flex:1;padding:15px 10px;text-align:center;border-right:1px solid var(--line)}
+  .count-cell:last-child{border-right:none}
+  .count-cell.phase{flex:1.7}
+  .big{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;line-height:1;color:var(--clay-bright)}
+  .count-cell.phase .big{font-size:19px;color:var(--lane);line-height:1.15}
+  .lbl{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+  .blurb{font-size:14.5px;line-height:1.6;color:#C3B9AD;margin-top:14px;padding:0 2px}
 
-  /* ---- Day cards ---- */
-  .days{display:flex;flex-direction:column;gap:12px}
-  .day{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  .day-top{display:flex;align-items:center;gap:13px;padding:14px 15px 12px}
-  .day-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
-  .day.hard .day-num{background:rgba(232,90,52,.14);color:var(--clay-bright);border-color:rgba(232,90,52,.35)}
-  .day.easy .day-num{background:rgba(79,168,138,.12);color:var(--easy);border-color:rgba(79,168,138,.3)}
-  .day.meet .day-num{background:rgba(232,178,58,.14);color:var(--meet);border-color:rgba(232,178,58,.4)}
-  .day-label{flex:1}
-  .day-kind{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;line-height:1}
-  .day-pill{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:5px;display:inline-block}
-  .day.hard .day-pill{background:rgba(232,90,52,.16);color:var(--clay-bright)}
-  .day.easy .day-pill{background:rgba(79,168,138,.14);color:var(--easy)}
-  .day.meet .day-pill{background:rgba(232,178,58,.16);color:var(--meet)}
+  /* ---- Week ---- */
+  .weekhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 12px;flex-wrap:wrap}
+  h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:21px;letter-spacing:.03em;text-transform:uppercase}
+  .legend{display:flex;gap:11px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot.speed{background:var(--speed)} .dot.engine{background:var(--engine)}
+  .dot.easy{background:var(--easy)} .dot.race{background:var(--meet)} .dot.off{background:var(--off)}
+
+  .days{display:flex;flex-direction:column;gap:10px}
+  .day{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;border-left-width:4px}
+  .day.speed{border-left-color:var(--speed)} .day.engine{border-left-color:var(--engine)}
+  .day.easy{border-left-color:var(--easy)} .day.race{border-left-color:var(--meet)}
+  .day.off{border-left-color:var(--off)}
+  .day-top{display:flex;align-items:center;gap:12px;padding:14px 15px}
+  .day-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;width:26px;height:26px;flex:0 0 26px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .day-label{flex:1;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .day-kind{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.02em;text-transform:uppercase}
+  .day-pill{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;padding:3px 7px;border-radius:20px}
+  .speed .day-pill{background:rgba(232,90,52,.15);color:var(--speed)}
+  .engine .day-pill{background:rgba(74,147,191,.15);color:var(--engine)}
+  .easy .day-pill{background:rgba(79,168,138,.15);color:var(--easy)}
+  .race .day-pill{background:rgba(232,178,58,.15);color:var(--meet)}
+  .off .day-pill{background:rgba(110,101,93,.2);color:#A79C92}
   .day-body{border-top:1px solid var(--line)}
-  .seg{padding:13px 15px;display:flex;gap:12px}
-  .seg + .seg{border-top:1px dashed var(--line)}
-  .seg-ico{flex:none;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px}
-  .seg-ico.track{background:rgba(201,70,44,.15)}
-  .seg-ico.gym{background:rgba(139,129,120,.15)}
+  .seg{display:flex;gap:11px;padding:13px 15px;border-bottom:1px solid var(--line)}
+  .seg:last-child{border-bottom:none}
+  .seg-ico{flex:0 0 24px;font-size:15px;line-height:1.4;opacity:.85}
   .seg-txt{flex:1}
-  .seg-h{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-  .seg-c{font-size:14.5px;line-height:1.5;color:#E7DFD5}
+  .seg-h{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .seg-c{font-size:14.5px;line-height:1.55;color:#DCD3C7}
+  .seg-c b{color:var(--lane);font-weight:600}
+  .seg-c em{font-family:'IBM Plex Mono',monospace;font-style:normal;font-weight:500;color:var(--lane);background:var(--surface-2);padding:1px 5px;border-radius:3px;white-space:nowrap}
+  .seg.feel .seg-c{color:#B5AA9E;font-size:14px}
 
-  /* ---- footer note ---- */
-  .note{margin-top:24px;font-size:12.5px;line-height:1.6;color:var(--muted);padding:14px 15px;background:var(--surface);border-radius:10px;border:1px solid var(--line)}
-  .note b{color:#C0B6AB;font-weight:600}
-  .spacer-rule{margin-top:8px;height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 8px,transparent 8px 16px)}
-  .empty{color:var(--muted);text-align:center;padding:40px 20px;font-size:15px;line-height:1.6}
-  ::selection{background:var(--clay);color:#fff}
+  /* ---- Paces ---- */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin-top:26px}
+  .panel h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+  .panel p.sub{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 6px 8px 0;border-bottom:1px solid var(--line)}
+  th.r,td.r{text-align:right;padding-right:0}
+  td{padding:11px 6px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .zn{font-weight:600;color:var(--lane)}
+  .zc{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:3px}
+  td.num{font-family:'IBM Plex Mono',monospace;white-space:nowrap;color:var(--lane)}
+
+  .splits{display:flex;gap:8px;margin-top:12px}
+  .split{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 6px;text-align:center}
+  .split .s-t{font-family:'IBM Plex Mono',monospace;font-size:17px;color:var(--meet)}
+  .split .s-l{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+
+  .note{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px;font-size:13.5px;line-height:1.65;color:#B5AA9E}
+  .note b{color:var(--lane)}
+  .note ol{margin:8px 0 0 18px} .note li{margin-bottom:8px}
+  .spacer-rule{height:1px;background:var(--line);margin-top:12px}
+  .empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px 18px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -100,17 +133,27 @@
   <header class="masthead">
     <div class="lane-tag">
       <span class="lane-num">Lane 1</span>
-      <span class="lane-sub">Sprint Build</span>
+      <span class="lane-sub">800 Build</span>
     </div>
     <h1>This Week's<br><span class="accent">Session</span></h1>
   </header>
 
   <section class="setup">
     <label for="date">Next Big Meet</label>
-    <div class="date-row">
-      <input type="date" id="date" />
-    </div>
+    <input type="date" id="date" />
   </section>
+
+  <details class="prs">
+    <summary>Your Times</summary>
+    <div class="prbody">
+      <div class="prrow"><span>200 m</span><input id="p2" value="24.91"></div>
+      <div class="prrow"><span>400 m</span><input id="p4" value="53.78"></div>
+      <div class="prrow"><span>800 m</span><input id="p8" value="2:04.23"></div>
+      <div class="prrow"><span>Mile</span><input id="pm" value="5:04"></div>
+      <div class="prrow"><span>Goal 800 m</span><input id="pg" value="2:00"></div>
+      <p class="prhint">Every target time in this app is worked out from these. Run a PR, change the number, and the whole plan moves with you. Type them like <b>2:04</b> or <b>53.78</b>.</p>
+    </div>
+  </details>
 
   <section class="status" id="status">
     <div class="countbar">
@@ -123,99 +166,344 @@
 
   <div id="weekWrap"></div>
 
+  <section class="panel" id="paceWrap"></section>
+
+  <section class="panel" id="raceWrap"></section>
+
   <div class="note" id="foot" style="display:none">
-    <b>How to read this:</b> Each card is one training day — the track work up top, the gym / adjunct work below it. Keep the two hard days (orange) at least 48 hours apart; you can move days around to fit your week as long as no two hard days touch.
+    <b>How to read this.</b> Each card is one day. The running is up top, the gym work under it, and the last line tells you how the session is supposed to <em>feel</em> — that line matters more than the numbers. Blue days build your engine, orange days protect your speed, green days are genuinely easy, and you get one full day off.
     <div class="spacer-rule"></div>
-    <div style="margin-top:10px"><b>One model, not gospel.</b> This follows a short-to-long sprint model (tempo-heavy base, sharpening near meets). It's a solid starting point — adjust with your coach for how you actually recover.</div>
+    <b style="display:block;margin-top:12px">Three rules that beat any workout here.</b>
+    <ol>
+      <li><b>Easy days have to be easy.</b> If you run your easy days medium-hard, your hard days stop working and you just get tired.</li>
+      <li><b>Take the day off.</b> You are still growing. That day is when you actually get faster, not the day you ran hard.</li>
+      <li><b>Eat and sleep like it's training.</b> Nine hours of sleep and enough food beats every session in this app. Under-eating is the most common way young runners stall out or get hurt.</li>
+    </ol>
+    <div class="spacer-rule"></div>
+    <div style="margin-top:12px"><b>Pain is different from tired.</b> Sharp pain, pain in one exact spot, or pain that gets worse as you run — stop, and tell your coach or a parent. Nothing here is worth an injury.</div>
+    <div class="spacer-rule"></div>
+    <div style="margin-top:12px"><b>One model, not gospel.</b> This is built around one athlete: strong 400 speed, an aerobic engine that is still catching up. Adjust it with your coach based on how you actually recover.</div>
   </div>
 </div>
 
 <script>
-const DATA = {"phases": [{"name": "General Prep I", "min": 20, "max": 9999, "blurb": "Off-season base. Almost no fast running — the week is built on tempo volume, general strength, and drills. You're building the engine and the body that will hold up later.", "days": [{"n": 1, "typeRaw": "STR+ACC", "run": "SHORT speed only: Acceleration 4–6×20–30m from crouch @95–100%, full recovery (≈120–180m total — this is the ONLY fast running today)", "adj": "Hypertrophy lift (main block): squat 3–4×6–10 @60–75%, RDL/Nordic 3×6–10, split squat 2×8; then in-place plyos (line hops, pogos) 100–150 contacts"}, {"n": 2, "typeRaw": "TEMPO", "run": "Extensive tempo: 2×(100-200-300-200-100) @<70% on grass (~1800–2000m), short walk/jog recovery", "adj": "General strength circuit (lunges, push-ups, prisoner squats, back raises) ×3; med ball 6–10 throws low intent; mobility"}, {"n": 3, "typeRaw": "HILLS+STR", "run": "Hills for acceleration (Francis GPP staple — velocity naturally submax, lower hamstring risk): 6–8×20–30m @100% effort, walk-down recovery", "adj": "Hypertrophy lift (lower B): trap-bar DL or squat variation 3×6–10, hip thrust 3×8, calf 3×10; box jump 2×5 (short-response plyo)"}, {"n": 4, "typeRaw": "TEMPO", "run": "Extensive tempo: 10–12×100m walk-back @<70% on grass (~1000–1200m)", "adj": "GS bodyweight circuit ×2–3; hurdle mobility (over/unders); med ball series low intent; drills (A-march, A-skip, dribbles)"}, {"n": 5, "typeRaw": "TEMPO/OFF", "run": "Easy tempo or off: 8×100m @<70% + movement-quality drills, OR full rest/cross-train", "adj": "Mobility, tissue care, core. No fatigue. Optional light in-place plyos."}]}, {"name": "General Prep II", "min": 12, "max": 19, "blurb": "Still base-focused, but max velocity is introduced in small doses. Strength goes heavier. Tempo still carries most of the running volume.", "days": [{"n": 1, "typeRaw": "STR+ACC", "run": "SHORT speed only: Acceleration 4×10m + 4×20m + 3×30m from crouch @95–100%, full recovery (≈270m total — the only fast running today)", "adj": "Max-strength lift begins: trap-bar DL 3–5×3–5 @80–90%, squat 3×5; then depth jump 1×5×2 + box jump 2–3×3–5 (short-response plyos)"}, {"n": 2, "typeRaw": "TEMPO", "run": "Extensive tempo: 2×(100-200-300-200-100) @<70% on grass (~1800–2000m)", "adj": "GS circuit ×2–3; med ball 8–10 throws low intent; hurdle mobility; drills"}, {"n": 3, "typeRaw": "MAXV+STR", "run": "SHORT max-velocity (introduced this block): 4–6×(20m build+10m fly) @95–100%, full recovery (~4 min) (≈180m held-velocity — kept small)", "adj": "Max-strength lift (lower B): squat or DL 3–5×3–5 @80–90%, hip thrust 3×5, calf 3×8; hurdle hops 2×5"}, {"n": 4, "typeRaw": "TEMPO", "run": "Extensive tempo: 10–15×100m walk-back @<70% on grass (~1000–1500m)", "adj": "GS bodyweight circuit ×2–3; med ball series; mobility; A-series drills"}, {"n": 5, "typeRaw": "TEMPO/OFF", "run": "Easy tempo or off: 8–10×100m @<70% + drills, OR rest/cross-train", "adj": "Isos calf/soleus 1–2×20–30s @RPE 5–6; mobility/circuit. No fatigue."}]}, {"name": "Specific Prep", "min": 6, "max": 11, "blurb": "The switch flips toward race speed. Real speed-endurance work appears, tempo starts to drop, and the sessions get sharper.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Max Velocity: 5–6×(20m build + 10m fly) @95–100%, full recovery", "adj": "Box jump 2–3×2–3 fast; partial squat 2×2–3 @60–75% fast; med ball 2×3–4; calf iso 2×20–30s"}, {"n": 2, "typeRaw": "LNL", "run": "Extensive tempo: 10×100m @<70% (1000–4000m/wk, reducing)", "adj": "Isos, calf/soleus/tibialis, mobility/tissue care 1–2×20–30s @RPE 5–6"}, {"n": 3, "typeRaw": "HNL", "run": "Acceleration / Race Model: 3×(3×30m) or 4×40–50m from blocks @95–100%", "adj": "Box jump 2–3×2–3 fast; partial squat 2×2–3 @60–75%; med ball 2×3–4; calf iso 2×20–30s"}, {"n": 4, "typeRaw": "LNL", "run": "Extensive tempo: 8×100m @<70% + mobility", "adj": "Isos, mobility/tissue care."}, {"n": 5, "typeRaw": "HNL", "run": "Speed/Specific Endurance (200/400): 2×60+2×80+2×100m (≈480m) @95–100%, 5–8 min rest", "adj": "Box jump 2×2–3 fast; med ball 2×3; calf iso 2×20–30s (light, post-SE)"}]}, {"name": "Early Competition / Pre-Comp", "min": 3, "max": 5, "blurb": "Race-sharpening. Speed-dominant week, one quality category per session, and meets start replacing a hard day.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Max Velocity: 4–5×(20m build + 10m fly) @95–100%, full recovery", "adj": "Box jump 2×2–3; med ball 2×3; no new exercises this close to comp"}, {"n": 2, "typeRaw": "LNL", "run": "Extensive tempo: 8–10×100m @<70% (recovery role) + mobility", "adj": "Isos, mobility, tissue care 1–2×20–30s @RPE 5–6"}, {"n": 3, "typeRaw": "HNL", "run": "Race Modelling: 3–4×40m from 3-point/blocks @95–100% (or SE 3×150–200m for 200/400)", "adj": "Box jump 2×2–3; med ball 2×3"}, {"n": 4, "typeRaw": "LNL", "run": "Easy tempo / recovery: 6–8×100m @<70% + hurdle mobility", "adj": "Isos, mobility. No fatigue."}, {"n": 5, "typeRaw": "MEET", "run": "Race replaces one HNL session most weeks (counts as high-CNS for 48h spacing)", "adj": "Pre-meet only: light activation, 2–3 strides"}]}, {"name": "Main Competition", "min": 1, "max": 2, "blurb": "Compete. Low volume, crisp quality, and the meet is the main hard effort of the week. Everything else keeps you fresh.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Acceleration: 4–6×20–30m from crouch @95–100%, full recovery (or Max-V 3–4×build+fly)", "adj": "Power only: box jump 2–3×2–3; partial squat 2×2–3 @60–75% fast; med ball 2×3–4; calf iso 2×20–30s"}, {"n": 2, "typeRaw": "LNL", "run": "Recovery tempo: 6–8×100m @<70%, protect freshness", "adj": "Isos, calf/soleus/tibialis, mobility 1–2×20–30s @RPE 5–6"}, {"n": 3, "typeRaw": "LNL", "run": "Easy movement / mobility, 2–3 buildups", "adj": "Mobility, tissue care. No fatigue."}, {"n": 4, "typeRaw": "MEET", "run": "RACE — the week's second high-CNS stimulus (48h+ from the HNL day)", "adj": "Pre-meet: warmup + 2×30m buildups + 1–2 starts, done in 40 min"}]}, {"name": "Championship / Peak", "min": 0, "max": 0, "blurb": "Taper and peak. Minimal volume, only rehearsed work, maximum freshness for the biggest race.", "days": [{"n": 1, "typeRaw": "HNL", "run": "Day −10/−8: Acceleration 3–4×20–30m from crouch @95–100%, full recovery", "adj": "Light activation only. Med ball 1×3 optional. No soreness."}, {"n": 2, "typeRaw": "LNL", "run": "Recovery tempo: 0–1000m/wk @<70% only + mobility", "adj": "Isos/mobility, light touch 1×20–30s @RPE 4–5"}, {"n": 3, "typeRaw": "HNL", "run": "Day −6/−4: Race Modelling 2–3×40m from 3-point @95–100%", "adj": "Light activation only. No new exercises."}, {"n": 4, "typeRaw": "LNL", "run": "Day −2 pre-meet: 2×30m buildups + 1–2 starts, done in 40 min", "adj": "Mobility only. Sleep priority."}, {"n": 5, "typeRaw": "MEET", "run": "RACE DAY", "adj": "—"}]}], "typeMap": {"STR+ACC": ["Strength + Short Accel", "hard"], "HILLS+STR": ["Hills + Strength", "hard"], "MAXV+STR": ["Max Velocity + Strength", "hard"], "HNL": ["Speed / Quality", "hard"], "TEMPO": ["Tempo", "easy"], "LNL": ["Tempo / Recovery", "easy"], "TEMPO/OFF": ["Tempo or Rest", "easy"], "MEET": ["Race Day", "meet"]}};
+/* ------------------------------------------------------------------
+   Lane 1 — 800 Build
+   Plan engine rewritten for a speed-type 800 runner:
+   strong 400/200, aerobic side still developing. The week is
+   engine-dominant, with speed protected in small, cheap doses.
+------------------------------------------------------------------ */
 
-function phaseFor(weeksOut){
-  for(const p of DATA.phases){ if(weeksOut>=p.min && weeksOut<=p.max) return p; }
-  return DATA.phases[DATA.phases.length-1];
-}
-function kindOf(typeRaw){
-  const m = DATA.typeMap[typeRaw];
-  return m ? {label:m[0], cat:m[1]} : {label:typeRaw, cat:'easy'};
-}
-function fmtInt(n){ return n<0?0:n; }
+/* ---------- storage (silently no-ops if unavailable) ---------- */
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
 
+/* ---------- time helpers ---------- */
+function parseT(str){
+  if(str===null||str===undefined) return 0;
+  const s = String(str).trim().replace(/\s/g,'');
+  if(s.indexOf(':')>-1){
+    const p = s.split(':');
+    return (parseFloat(p[0])||0)*60 + (parseFloat(p[1])||0);
+  }
+  return parseFloat(s)||0;
+}
+function T(sec){
+  const r = Math.round(sec);
+  const m = Math.floor(r/60), ss = r%60;
+  return m>0 ? m+':'+String(ss).padStart(2,'0') : String(ss);
+}
+const R  = (a,b) => T(a)+'\u2013'+T(b);
+const at = (p400,d) => p400*(d/400);
+const atR= (pair,d) => R(at(pair[0],d), at(pair[1],d));
+const mi = p400 => T(p400*4.02);
+const miR= pair => mi(pair[0])+'\u2013'+mi(pair[1]);
+
+/* ---------- pace zones ----------
+   Slow zones scale off the mile PR; fast zones off the 400/800.
+   Ranges are the standard middle-distance multipliers, kept on the
+   conservative side because he is 15 and the engine is the part
+   still being built. */
+function zones(pr){
+  const m400 = pr.mile/4.02;
+  return {
+    easy:   [m400*1.45, m400*1.68],
+    steady: [m400*1.30, m400*1.42],
+    thresh: [m400*1.21, m400*1.27],
+    aero:   [m400*1.01, m400*1.07],
+    r800:   pr.e8/2,
+    g800:   pr.goal/2,
+    p400:   pr.e4,
+    p200:   pr.e2,
+    stride: [pr.e2/2*1.15, pr.e2/2*1.23]
+  };
+}
+
+/* ---------- session library ----------
+   Each returns { kind, label, run, feel, gym } */
+const W = {
+  easy: z => ({ kind:'easy', label:'Easy Run', gym:'Mobility, core, calf raises. Nothing that makes you sore.',
+    run:`Run <b>30\u201335 minutes</b> at <em>${miR(z.easy)}</em> per mile. Soft ground if you can \u2014 grass, dirt, the track infield. Finish with <b>6 \u00d7 100 m strides</b> at about <em>${R(z.stride[0],z.stride[1])}</em>, walking back between each.`,
+    feel:'Easy means easy. You should be able to hold a full conversation the whole way. If you couldn\u2019t, you ran it too hard.' }),
+
+  easyShort: z => ({ kind:'easy', label:'Shakeout', gym:'Mobility and stretching only.',
+    run:`Run <b>20\u201325 minutes</b> at <em>${miR(z.easy)}</em> per mile, then <b>4 \u00d7 100 m strides</b>.`,
+    feel:'You should finish feeling better than when you started. If you\u2019re genuinely wrecked, take the day off instead \u2014 that\u2019s a real choice, not quitting.' }),
+
+  long: z => ({ kind:'easy', label:'Long Run', gym:'Nothing. Eat properly afterwards.',
+    run:`Run <b>45\u201355 minutes</b> at <em>${miR(z.easy)}</em> per mile. Start at the slow end. If you feel good, pick the last 5 minutes up to <em>${miR(z.steady)}</em>.`,
+    feel:'Comfortable for the first half hour, honest work in the last fifteen. This is the session that stops your last 200 falling apart.' }),
+
+  hillSprints: z => ({ kind:'speed', label:'Easy Run + Hill Sprints', gym:'Lift: squat or trap-bar deadlift 3\u00d75 (leave 3 reps in the tank), split squat 3\u00d78, Nordic curl or single-leg RDL 3\u00d76.',
+    run:`Run <b>25\u201330 minutes easy</b>, then <b>8 \u00d7 10\u201312 second hill sprints</b>. Full effort, but relaxed face and shoulders. <em>Walk all the way down</em> \u2014 that\u2019s about 2 minutes rest, and it\u2019s the whole point. Jog 8 minutes to finish.`,
+    feel:'Powerful, not exhausting. You should never be out of breath for long. If a sprint feels slower than the first one, you\u2019re done \u2014 stop there.' }),
+
+  strides: z => ({ kind:'speed', label:'Easy Run + Strides', gym:'General strength circuit \u00d73: 10 split squats each leg, 8 push-ups, 10 glute bridges, 30 s plank, 10 rocket jumps.',
+    run:`Run <b>30 minutes easy</b> at <em>${miR(z.easy)}</em>, then <b>8 \u00d7 100 m strides</b> at about <em>${R(z.stride[0],z.stride[1])}</em>, walking back between each.`,
+    feel:'Smooth and fast, never straining. Strides are how your speed survives months of distance running \u2014 they cost you almost nothing.' }),
+
+  thresh: z => ({ kind:'engine', label:'Threshold', gym:'Mobility only. No lifting on this day.',
+    run:`Warm up 12 min easy + 4 strides. Then <b>4\u20135 \u00d7 1000 m</b> in <em>${atR(z.thresh,1000)}</em> \u2014 that\u2019s <em>${atR(z.thresh,400)}</em> a lap \u2014 with a <b>90 second jog</b> between. Cool down 10 min.`,
+    feel:'Comfortably hard. You could say three or four words, not a whole sentence. If you\u2019re gasping you\u2019re going too fast and the workout stops working. Can\u2019t hold the pace by rep 4? Stop at 4.' }),
+
+  threshShort: z => ({ kind:'engine', label:'Threshold, Short', gym:'Light general strength circuit \u00d72.',
+    run:`Warm up 12 min + 4 strides. Then <b>3 \u00d7 1000 m</b> in <em>${atR(z.thresh,1000)}</em>, jogging 90 seconds between. Cool down 10 min.`,
+    feel:'Same as a full threshold day but you leave with something left. Close to a meet, that\u2019s deliberate.' }),
+
+  tempoRun: z => ({ kind:'engine', label:'Tempo Run', gym:'Mobility only.',
+    run:`Warm up 12 min + 4 strides. Then run <b>15\u201320 minutes without stopping</b> at <em>${mi(z.thresh[1])}</em> per mile (<em>${T(z.thresh[1])}</em> a lap on the track). Cool down 10 min.`,
+    feel:'Locked in and concentrating, but you could go a few more minutes at the end. This teaches you to hold an honest effort with no break \u2014 exactly what lap two of an 800 asks for.' }),
+
+  hills: z => ({ kind:'engine', label:'Hill Reps', gym:'Lift: squat or deadlift 3\u00d75, hip thrust 3\u00d78, calf raises 3\u00d712.',
+    run:`Warm up 12 min easy. Then <b>6\u20138 \u00d7 45 seconds uphill</b>, strong \u2014 about the effort you\u2019d hold in a mile race. <b>Jog down easy</b>, that\u2019s your rest. Cool down 10 min.`,
+    feel:'Breathing hard at the top, recovered by the bottom. If you\u2019re not recovered at the bottom, take an extra minute before the next one.' }),
+
+  aero: z => ({ kind:'engine', label:'Aerobic Power', gym:'Box jumps 3\u00d75, pogo hops 3\u00d715. Keep it snappy.',
+    run:`Warm up 12 min + 4 strides. Then <b>6 \u00d7 400 m</b> in <em>${atR(z.aero,400)}</em> with a <b>2:30 jog</b> between. That\u2019s about your mile race pace. Cool down 10 min.`,
+    feel:'Hard. Rep 6 should be tough, but you should feel like a 7th was possible. If a rep comes in more than 3 seconds slow, that was your last one.' }),
+
+  pace300: z => ({ kind:'speed', label:'800 Pace', gym:'Fast and light: box jumps 3\u00d73, partial squat 2\u00d73 moving quickly, med ball throws \u00d76.',
+    run:`Warm up 15 min + 4 \u00d7 100 m buildups. Then <b>6 \u00d7 300 m</b> in <em>${T(at(z.g800,300))}</em> \u2014 that\u2019s goal 800 pace, <em>${T(z.g800)}</em> a lap \u2014 with <b>3 minutes</b> walking between. Cool down 10 min.`,
+    feel:'The first two should feel almost too easy. That\u2019s correct. The last two should feel like race effort. You\u2019re teaching your legs what goal pace feels like so race day isn\u2019t a guess.' }),
+
+  broken: z => ({ kind:'speed', label:'Broken 800s', gym:'Light: box jumps 2\u00d73, med ball \u00d76. Nothing heavy this close to racing.',
+    run:`Warm up 15 min + 4 buildups. Then <b>3 sets of</b>: 400 m in <em>${T(z.g800)}</em>, <b>rest 45 seconds</b>, then 200 m in <em>${T(at(z.g800,200)-1.5)}</em>. Take <b>8 full minutes</b> between sets \u2014 walk, drink, breathe. Cool down 10 min.`,
+    feel:'That 200 after the short rest is supposed to hurt. That is the entire workout. It puts you in the last 200 of a race \u2014 tired, out of air, still needing to run fast \u2014 without the cost of a time trial.' }),
+
+  se200: z => ({ kind:'speed', label:'Speed Endurance', gym:'Box jumps 2\u00d73 only.',
+    run:`Warm up 15 min + 4 buildups. Then <b>5 \u00d7 200 m</b> in <em>${T(at(z.p400,200)+1)}</em> \u2014 about your 400 race pace \u2014 with <b>4 full minutes</b> between. Walk the rest, don\u2019t jog it. Cool down 12 min.`,
+    feel:'Fast and smooth, not straining. The long rest is what keeps every rep quick. Running faster than 800 pace is what makes 800 pace feel slow.' }),
+
+  maxSpeed: z => ({ kind:'speed', label:'Max Speed', gym:'Box jumps 3\u00d73, med ball throws \u00d78, hamstring work 3\u00d76.',
+    run:`Full warm up: 12 min jog, drills, 4 \u00d7 60 m buildups. Then <b>3 \u00d7 flying 20 m</b> (build over 30 m, hold top speed for 20 m) with <b>5\u20136 min</b> rest, and <b>2 \u00d7 60 m</b> from a standing start with <b>6\u20138 min</b> rest. Yes, really that much rest. Cool down 10 min.`,
+    feel:'Every rep should feel like your fastest. If rep 4 is slower than rep 1, the session is over. Any hamstring tightness \u2014 not soreness, tightness \u2014 shut it down and go jog.' }),
+
+  grass: z => ({ kind:'easy', label:'Grass Tempo', gym:'General strength circuit \u00d73 + med ball.',
+    run:`Warm up 10 min. Then <b>2 sets of 8 \u00d7 100 m on grass</b> in <em>${T(at(z.steady[1],100))}\u2013${T(at(z.easy[1],100))} sec</em>, walking 30 seconds between reps and 3 minutes between sets.`,
+    feel:'Never hard \u2014 about 70% effort, controlled and springy. You get aerobic work and good running mechanics with almost no wear on your body. Safe even when you\u2019re a bit tired.' }),
+
+  preMeet: z => ({ kind:'easy', label:'Pre-Meet', gym:'Stretch. Sleep. Lay your kit out.',
+    run:`Jog 10 min easy + drills. Then <b>2 \u00d7 200 m</b> in <em>${T(at(z.g800,200))}</em> (goal pace) walking 3 min between, and <b>4 \u00d7 100 m buildups</b>. Jog 5 min. Home in 40 minutes.`,
+    feel:'You should leave feeling like you could have done a lot more. That\u2019s exactly right \u2014 the day before a race you can\u2019t get fitter, only more tired. Nothing new today. Ever.' }),
+
+  race: z => ({ kind:'race', label:'Race Day \u2014 800 m', gym:'Cool down 10\u201315 min jog no matter how it went. Carbs and fluid within 30 min.',
+    run:`Start warming up <b>45 minutes before</b>: 12 min jog, drills, 4 buildups, spikes on, 2 \u00d7 100 m at race pace.<br><br><b>First 200:</b> <em>${T(at(z.g800,200)-1.5)}</em> \u2014 get out hard enough to be in good position, then settle. Don\u2019t fight for the lead down the backstretch.<br><b>At 400:</b> <em>${T(z.g800-1)}</em> \u2014 this should feel controlled, like you\u2019re holding back.<br><b>At 600:</b> <em>${T(at(z.g800,600)+1)}</em> \u2014 stay tall, arms driving, face relaxed. This is where the race is decided.<br><b>Last 200:</b> everything. This is where your 400 speed pays you back.`,
+    feel:'Controlled for 600, brave for 200. You are a speed-type 800 runner \u2014 your plan is to be in touch at the bell and win the last 200, not to run away from the field early.' }),
+
+  raceXC: z => ({ kind:'race', label:'Race Day \u2014 Cross Country', gym:'Cool down 10\u201315 min easy jog. Then eat.',
+    run:`Warm up 15 min + drills + 4 strides, finishing 10 min before the gun.<br><br><b>Mile 1:</b> <em>${mi(z.thresh[1]*0.99)}</em> \u2014 controlled. Everyone goes out too fast in cross country; let them.<br><b>Mile 2:</b> hold the effort and start picking people off. This is the mile that\u2019s won by whoever concentrates.<br><b>Mile 3:</b> build to the finish, then sprint the last 200.`,
+    feel:'Uncomfortable from mile 2 on. That\u2019s normal and it\u2019s survivable. Nobody in that race has your last 200 \u2014 use it. Cross country is the cheapest aerobic fitness you\u2019ll ever get.' }),
+
+  off: () => ({ kind:'off', label:'Day Off', gym:'Nothing. Sleep 9 hours.',
+    run:`<b>No running, no lifting.</b> Walking, swimming, messing around with friends is all fine.`,
+    feel:'Feeling restless is normal. Take it anyway \u2014 the international guidelines for young runners call for one complete rest day every week, and this is the day your body does the building.' })
+};
+
+/* ---------- phases, by weeks until the meet ---------- */
+const PHASES = [
+  { name:'Build The Engine', min:20, max:9999,
+    blurb:'Way out from the meet, so this is the block that changes your ceiling. Your 400 speed is already your weapon \u2014 what you don\u2019t have yet is the engine under it. Nearly every day is aerobic; the fast stuff is short and cheap, just enough that you keep your speed.',
+    days:['hillSprints','thresh','easy','hills','easyShort','long','off'] },
+
+  { name:'Engine + Speed', min:12, max:19,
+    blurb:'Same aerobic emphasis, but now one session a week works the top end of your engine \u2014 mile-pace running. Strength goes a bit heavier. Still no all-out intervals; those are a bad trade for you right now.',
+    days:['hillSprints','thresh','strides','aero','easyShort','long','off'] },
+
+  { name:'Turn Speed Into 800s', min:6, max:11,
+    blurb:'The switch flips. Goal-pace running appears, real max-speed work comes back, and the threshold day stays because it\u2019s still your biggest opportunity. This is where a 53-second 400 starts turning into a fast second lap.',
+    days:['pace300','strides','thresh','maxSpeed','easyShort','long','off'] },
+
+  { name:'Sharpen', min:3, max:5,
+    blurb:'Race-specific. Less volume, higher quality, and the sessions start to look like pieces of an actual 800. The aerobic work you did all winter is banked \u2014 you\u2019re just tuning now.',
+    days:['broken','easy','threshShort','se200','preMeet','race','off'] },
+
+  { name:'Race Weeks', min:1, max:2,
+    blurb:'Meets are the hard work now. One quality session early in the week, everything else keeps you fresh, and the race itself is the second hard effort.',
+    days:['pace300','easy','easyShort','preMeet','race','easy','off'] },
+
+  { name:'Championship Week', min:0, max:0,
+    blurb:'Taper. Nothing new, nothing heavy, nothing long. You cannot get fitter this week \u2014 you can only show up fresh or show up tired. Choose fresh.',
+    days:['pace300','easyShort','easy','preMeet','off','preMeet','race'] }
+];
+
+const KIND_PILL = { speed:'Speed', engine:'Engine', easy:'Easy', race:'Race', off:'Rest' };
+
+/* ---------- wiring ---------- */
 const el = id => document.getElementById(id);
-const dateInput = el('date');
+const FIELDS = { p2:'e2', p4:'e4', p8:'e8', pm:'mile', pg:'goal' };
+const DEFAULT_PR = { e2:24.91, e4:53.78, e8:124.23, mile:304, goal:120 };
 
-// default: 12 weeks out from today, to show a meaningful week on first open
-(function seed(){
-  const d = new Date(); d.setDate(d.getDate() + 12*7);
-  dateInput.value = d.toISOString().slice(0,10);
+(function seedInputs(){
+  const saved = store.get('lane1.prs');
+  if(saved){
+    try {
+      const o = JSON.parse(saved);
+      for(const id in FIELDS){ if(o[id]) el(id).value = o[id]; }
+    } catch(e){}
+  }
+  const savedDate = store.get('lane1.meet');
+  if(savedDate){ el('date').value = savedDate; }
+  else { const d = new Date(); d.setDate(d.getDate()+12*7); el('date').value = d.toISOString().slice(0,10); }
 })();
 
+function readPRs(){
+  const pr = {}, raw = {};
+  for(const id in FIELDS){
+    raw[id] = el(id).value;
+    const v = parseT(el(id).value);
+    pr[FIELDS[id]] = v > 0 ? v : DEFAULT_PR[FIELDS[id]];
+  }
+  store.set('lane1.prs', JSON.stringify(raw));
+  return pr;
+}
+
+function phaseFor(weeksOut){
+  for(const p of PHASES){ if(weeksOut>=p.min && weeksOut<=p.max) return p; }
+  return PHASES[PHASES.length-1];
+}
+
 function render(){
-  const val = dateInput.value;
-  if(!val){ el('status').classList.remove('show'); el('weekWrap').innerHTML=''; el('foot').style.display='none'; return; }
+  const val = el('date').value;
+  const pr  = readPRs();
+  const z   = zones(pr);
+
+  renderPaces(z, pr);
+  renderRace(z);
+
+  if(!val){
+    el('status').classList.remove('show');
+    el('weekWrap').innerHTML=''; el('foot').style.display='none';
+    return;
+  }
+  store.set('lane1.meet', val);
+
   const today = new Date(); today.setHours(0,0,0,0);
-  const meet = new Date(val+'T00:00:00');
-  const msDay = 86400000;
-  const daysOut = Math.round((meet - today)/msDay);
+  const meet  = new Date(val+'T00:00:00');
+  const daysOut  = Math.round((meet-today)/86400000);
   const weeksOut = Math.max(0, Math.ceil(daysOut/7));
 
   el('status').classList.add('show');
 
   if(daysOut < 0){
-    el('cWeeks').textContent='—'; el('cDays').textContent='—'; el('cPhase').textContent='Past';
-    el('blurb').textContent='That date has already passed. Pick your next meet to see this week\u2019s plan.';
+    el('cWeeks').textContent='\u2014'; el('cDays').textContent='\u2014'; el('cPhase').textContent='Past';
+    el('blurb').textContent='That date has already gone by. Put in your next meet to load this week\u2019s plan.';
     el('weekWrap').innerHTML='<div class="empty">Set a meet date in the future to load your week.</div>';
     el('foot').style.display='none';
     return;
   }
 
   const p = phaseFor(weeksOut);
-  el('cWeeks').textContent = fmtInt(weeksOut);
-  el('cDays').textContent = fmtInt(daysOut);
+  el('cWeeks').textContent = weeksOut;
+  el('cDays').textContent  = daysOut;
   el('cPhase').textContent = p.name;
-  el('blurb').textContent = p.blurb;
+  el('blurb').textContent  = p.blurb;
 
-  let hardCount = 0;
-  const cards = p.days.map(d=>{
-    const k = kindOf(d.typeRaw);
-    if(k.cat==='hard') hardCount++;
-    const trackSeg = `<div class="seg">
-        <div class="seg-ico track">\u{1F3C3}</div>
-        <div class="seg-txt"><div class="seg-h">Track</div><div class="seg-c">${d.run}</div></div>
-      </div>`;
-    const gymSeg = (d.adj && d.adj.trim()!=='\u2014') ? `<div class="seg">
-        <div class="seg-ico gym">\u{1F3CB}</div>
-        <div class="seg-txt"><div class="seg-h">Gym / Adjunct</div><div class="seg-c">${d.adj}</div></div>
+  const cards = p.days.map((key,i) => {
+    const s = W[key](z);
+    const gymSeg = s.gym ? `<div class="seg">
+        <div class="seg-ico">\u{1F3CB}</div>
+        <div class="seg-txt"><div class="seg-h">Gym / Extra</div><div class="seg-c">${s.gym}</div></div>
       </div>` : '';
-    return `<article class="day ${k.cat}">
+    return `<article class="day ${s.kind}">
       <div class="day-top">
-        <div class="day-num">${d.n}</div>
+        <div class="day-num">${i+1}</div>
         <div class="day-label">
-          <div class="day-kind">${k.label}</div>
-          <span class="day-pill">${k.cat==='hard'?'Hard day':k.cat==='meet'?'Race':'Easy day'}</span>
+          <div class="day-kind">${s.label}</div>
+          <span class="day-pill">${KIND_PILL[s.kind]}</span>
         </div>
       </div>
-      <div class="day-body">${trackSeg}${gymSeg}</div>
+      <div class="day-body">
+        <div class="seg">
+          <div class="seg-ico">\u{1F3C3}</div>
+          <div class="seg-txt"><div class="seg-h">Running</div><div class="seg-c">${s.run}</div></div>
+        </div>
+        ${gymSeg}
+        <div class="seg feel">
+          <div class="seg-ico">\u{1F4A1}</div>
+          <div class="seg-txt"><div class="seg-h">How it should feel</div><div class="seg-c">${s.feel}</div></div>
+        </div>
+      </div>
     </article>`;
   }).join('');
 
   el('weekWrap').innerHTML = `
     <div class="weekhead">
-      <h2>${p.days.length}-Day Week</h2>
+      <h2>Your 7-Day Week</h2>
       <div class="legend">
-        <span><i class="dot hard"></i>Hard</span>
+        <span><i class="dot speed"></i>Speed</span>
+        <span><i class="dot engine"></i>Engine</span>
         <span><i class="dot easy"></i>Easy</span>
-        <span><i class="dot meet"></i>Race</span>
+        <span><i class="dot race"></i>Race</span>
+        <span><i class="dot off"></i>Rest</span>
       </div>
     </div>
     <div class="days">${cards}</div>`;
   el('foot').style.display='block';
 }
 
-dateInput.addEventListener('change', render);
-dateInput.addEventListener('input', render);
+function renderPaces(z, pr){
+  const rows = [
+    ['Easy','Full conversation the whole way. Most of your running lives here.', atR(z.easy,400), miR(z.easy)+' / mi'],
+    ['Steady','Short sentences only. The end of a long run.', atR(z.steady,400), miR(z.steady)+' / mi'],
+    ['Threshold','Comfortably hard \u2014 three or four words. Your biggest opportunity.', atR(z.thresh,400), miR(z.thresh)+' / mi'],
+    ['Mile pace','Hard, but you could repeat it. Aerobic power days.', atR(z.aero,400), atR(z.aero,200)+' / 200'],
+    ['800 race pace','What you run right now.', T(z.r800), T(at(z.r800,200))+' / 200'],
+    ['Goal 800 pace','What every race-pace workout is built on.', T(z.g800), T(at(z.g800,200))+' / 200'],
+    ['400 pace','Your weapon. Speed endurance reps live here.', T(z.p400), T(at(z.p400,200))+' / 200'],
+    ['Flat out','Hill sprints and flying runs. No target \u2014 fast and relaxed.', '\u2014', T(z.p200/2)+' / 100']
+  ];
+  el('paceWrap').innerHTML = `
+    <h3>Your Paces</h3>
+    <p class="sub">Worked out from your times. Change a PR up top and these move with you.</p>
+    <table>
+      <thead><tr><th>Zone</th><th class="r">Per Lap</th><th class="r">Pace</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+        <td><div class="zn">${r[0]}</div><div class="zc">${r[1]}</div></td>
+        <td class="num r">${r[2]}</td><td class="num r">${r[3]}</td></tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function renderRace(z){
+  el('raceWrap').innerHTML = `
+    <h3>Race Plan \u2014 ${T(z.g800*2)}</h3>
+    <p class="sub">Learn these four numbers. Controlled through 600, brave for the last 200.</p>
+    <div class="splits">
+      <div class="split"><div class="s-t">${T(at(z.g800,200)-1.5)}</div><div class="s-l">200</div></div>
+      <div class="split"><div class="s-t">${T(z.g800-1)}</div><div class="s-l">400</div></div>
+      <div class="split"><div class="s-t">${T(at(z.g800,600)+1)}</div><div class="s-l">600</div></div>
+      <div class="split"><div class="s-t">${T(z.g800*2)}</div><div class="s-l">Finish</div></div>
+    </div>
+    <p class="sub" style="margin:14px 0 0">If the 400 split feels hard, you went out too fast \u2014 that\u2019s the one to get right.</p>`;
+}
+
+el('date').addEventListener('change', render);
+el('date').addEventListener('input', render);
+for(const id in FIELDS){
+  el(id).addEventListener('change', render);
+  el(id).addEventListener('blur', render);
+}
 render();
 </script>
 </body>
