@@ -161,9 +161,6 @@
       <label class="field">Goal 400 <input id="pg4" inputmode="decimal"></label>
       <label class="field">Goal 800 <input id="pg8" inputmode="decimal"></label>
     </div>
-    <label class="field">Hill nearby?
-      <select id="hill"><option value="yes">Yes, I have a hill</option><option value="no">No, flat only</option></select>
-    </label>
     <div class="row">
       <button class="btn ghost" type="button" id="todayBtn">Go to today</button>
       <button class="btn ghost" type="button" id="resetBtn">Clear this week's ticks</button>
@@ -225,7 +222,7 @@
 <div class="ref"><b>Llanos-Lagos et al. (2024), Sports Medicine.</b> Heavy strength work and mixed strength methods improved running economy in middle- and long-distance runners; light-load and isometric-only work did much less. <b>This is why gym days use real load and low reps instead of endless high-rep circuits.</b></div>
 <div class="ref"><b>Spencer &amp; Gastin (2001).</b> Energy system contribution by race: roughly 43% aerobic for the 400, 66% for the 800 and 84% for the 1500. <b>This is why building the engine is the fastest route to a better 800 &mdash; the 800 is already mostly aerobic.</b></div>
 <div class="ref"><b>Youth Running Consensus Statement (2021), British Journal of Sports Medicine.</b> Guidelines for young runners: at least one rest day per week, planned breaks across the year, enough food, and training built around growth rather than copied from adults. <b>This is why there is a day off, and why nobody here is copying elite mileage or Norwegian double-threshold training.</b></div>
-<div class="ref"><b>Coaching practice.</b> The overall build &mdash; big aerobic base first, race-specific work last &mdash; is classic Lydiard and Peter Coe periodisation. The short hill sprints and strides that protect sprint speed all year follow Charlie Francis and the ALTIS group (Dan Pfaff, Stuart McMillan, Danny Mackey), whose <i>Coaching the Endurance Events</i> curriculum covers the 800 upward.</div>
+<div class="ref"><b>Coaching practice.</b> The overall build &mdash; big aerobic base first, race-specific work last &mdash; is classic Lydiard and Peter Coe periodisation. The short sprints, resisted sprints and strides that protect sprint speed all year follow Charlie Francis and the ALTIS group (Dan Pfaff, Stuart McMillan, Danny Mackey), whose <i>Coaching the Endurance Events</i> curriculum covers the 800 upward.</div>
 <div class="ref"><b>Charlie Francis, ALTIS (Pfaff, McMillan) and Tony Holler.</b> Hard days and easy days kept apart, sprints done fresh with full rest, and the times written down. Speed endurance and special endurance for the 400 (fast 150s, 200s, 300 + 100s) use very few reps with very long rest. <b>This is why hard days never land back to back, and why the rest between fast reps is so long.</b></div>
     <p class="hint" style="margin-top:10px">A research summary is a starting point, not a prescription for one person. Your coach watches you run. This app doesn't.</p>
   </details>
@@ -298,12 +295,11 @@
   const HOW = [
     ["flying", "Build up over 30 m, then hold top speed for the next 20 m. Time the fast 20 if someone can."],
     ["standing 60", "Start standing, sprint 60 m all-out. Full rest after — 6–8 minutes."],
-    ["hill sprint", "Up a hill, all-out but relaxed in your face and shoulders. Walk all the way down — that's your rest, and it matters."],
-    ["flat sprint", "On grass, build over the first few steps and sprint the rest. Walk back and rest 2 minutes."],
-    ["hill repeat", "Strong uphill running for the time — about mile-race effort, not a sprint. Jog back down."],
+    ["resisted sprints, light", "ExerGenie or Activator belt set light. You should still look like a sprinter — if it turns into a slow march, it's too heavy. Push the track back hard and stay low."],
+    ["short sprints", "Standing start, all-out but relaxed in your face and shoulders. Walk back slowly — that's your rest, and it matters."],
     ["strong 45s", "Hard running on the flat for the time, about mile-race effort. Jog 90 s between."],
     ["strides", "Smooth fast 100s — not a race, not a jog. Relaxed jaw and shoulders. Walk back."],
-    ["1000", "Comfortably hard: you could say 3–4 words, not a sentence. Jog 90 s between."],
+    ["600 m", "Comfortably hard: you could say 3–4 words, not a sentence. Jog 90 s between."],
     ["continuous", "Comfortably hard, no stopping. Locked in, but you could keep going a few more minutes."],
     ["fast 400", "About mile race pace. Hard but repeatable. Jog the rest."],
     ["fast 150", "At about 400 race pace. Fast but smooth. Walk the full rest."],
@@ -349,7 +345,6 @@
   function SESSION(key, z, o, v) {
     // v: volume scale (1 = normal, smaller near meets)
     const n = (x) => Math.max(1, Math.round(x * v));
-    const hill = o.hill === "yes";
 
     const easyGym = {
       title: "Easy cardio + core",
@@ -359,16 +354,19 @@
 
     const S = {
       /* ---------- SPEED DAYS ---------- */
-      hillSprints: {
+      speedFlat: {
         type: "high", focus: "Speed", why: "Top speed is the ceiling for both the 400 and the 800. Short sprints protect it.",
-        track: { title: hill ? "Easy run + hill sprints" : "Easy run + sprints",
+        track: { title: "Easy run + sprints",
           blocks: [
-            { h: "Run", items: ["Easy run | 25–30 min · [[" + mileR(z.easy) + "]] per mile"] },
-            { h: "Sprints", items: [hill ? "Hill sprints | " + n(8) + " × 10–12 s · all-out · walk down" : "Flat sprints on grass | " + n(8) + " × 10–12 s · walk back + 2 min"] },
+            { h: "Run", items: ["Easy run | 20–25 min · [[" + mileR(z.easy) + "]] per mile"] },
+            { h: "Sprints", items: [
+              "Resisted sprints, light (ExerGenie or Activator belt) | " + n(4) + " × 20 m · walk back + 2 min",
+              "Short sprints | " + n(5) + " × 40 m · standing start · all-out · walk back + 3 min"
+            ] },
             { h: "Jumps", items: ["Pogo hops | 3 × 10", "Broad jumps | 3 × 3"] }
           ],
           feel: "Powerful, never exhausting. If one feels slower than the first, you're done for the day.",
-          why: "Sprint speed is what separates the best 800 runners, and it fades if you only run distance. Ten seconds at a time protects it and costs almost nothing.", src: "Sandford et al. 2019" },
+          why: "Sprint speed is what separates the best 800 runners, and it fades if you only run distance. A few short sprints protect it and cost almost nothing.", src: "Sandford et al. 2019" },
         gym: { title: "Jumps + heavy legs",
           blocks: [{ h: "Jumps + throws", items: ["Box jumps | 3 × 3", "Broad jumps | 3 × 3", "Med-ball throw forward | 6 throws"] }, { h: "Lift", items: LIFT(true) }],
           feel: "Heavy but clean. Every rep looks the same.",
@@ -392,14 +390,12 @@
       },
 
       /* ---------- 400 DAYS ---------- */
-      hills: {
+      strong45s: {
         type: "high", focus: "400 day", why: "Strength-endurance for the back half of the 400 and the second lap of the 800.",
-        track: { title: hill ? "Hill repeats" : "Strong 45s",
-          blocks: [{ h: "Main set", items: [hill
-            ? "Hill repeats | " + n(7) + " × 45 s · strong, about mile-race effort · jog down"
-            : "Strong 45s | " + n(7) + " × 45 s · about [[" + rng(z.fast[0], z.fast[1]) + "]] per lap pace · jog 90 s"] }],
-          feel: "Breathing hard at the top, recovered by the bottom. If you're not, take an extra minute.",
-          why: "Builds the engine and leg strength at once. Uphill is easier on your hamstrings than the same effort on the flat.", src: "Francis / ALTIS practice" },
+        track: { title: "Strong 45s",
+          blocks: [{ h: "Main set", items: ["Strong 45s | " + n(6) + " × 45 s · about [[" + rng(z.fast[0], z.fast[1]) + "]] per lap pace · jog 90 s"] }],
+          feel: "Breathing hard at the end of each, recovered by the start of the next. If you're not, take an extra minute.",
+          why: "Builds the engine and the strength to hold your form when you're tired — without sprinting all-out yet.", src: "Haugen et al. 2021" },
         gym: { title: "Bike sprints + power",
           blocks: [{ h: "Bike", items: ["Bike sprints | " + n(5) + " × 30 s all-out · 4 min easy between"] }, { h: "Power", items: ["Box jumps | 3 × 3", "Kettlebell swings | 3 sets of 10"] }],
           feel: "The last 10 seconds of each sprint should burn.",
@@ -446,12 +442,12 @@
       /* ---------- 800 DAYS ---------- */
       thresh: {
         type: "high", focus: "800 day", why: "Builds the engine — the pace you can hold without blowing up. Your biggest opportunity.",
-        track: { title: "Comfortably hard 1000s",
-          blocks: [{ h: "Main set", items: ["1000 m repeats | " + n(5) + " × 1000 m · [[" + rng(at(z.thresh[0], 1000), at(z.thresh[1], 1000)) + "]] each (" + rng(z.thresh[0], z.thresh[1]) + " per lap) · jog 90 s"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
-          feel: "Three or four words, not a sentence. Gasping means too fast. Can't hold pace on the fourth? Stop at four.",
+        track: { title: "Comfortably hard 600s",
+          blocks: [{ h: "Main set", items: ["600 m repeats | " + n(4) + " × 600 m · [[" + rng(at(z.thresh[0], 600), at(z.thresh[1], 600)) + "]] each (" + rng(z.thresh[0], z.thresh[1]) + " per lap) · jog 90 s"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          feel: "Three or four words, not a sentence. Gasping means too fast. Can't hold pace on the third? Stop at three.",
           why: "Your 400 and 800 are well ahead of your mile — the engine is what's lagging. The 800 is about two-thirds aerobic.", src: "Haugen et al. 2021 · Spencer & Gastin 2001" },
         gym: { title: "Bike or rower intervals",
-          blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(5) + " × 4 min hard · 2 min easy"] }],
+          blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(4) + " × 3 min hard · 2 min easy"] }],
           feel: "Comfortably hard — 3–4 words at a time.",
           why: "Builds the same engine as the track version, without the pounding. Good if your legs are beat up.", src: "Haugen et al. 2021" },
         suggest: "track"
@@ -459,16 +455,16 @@
       tempo: {
         type: "high", focus: "800 day", why: "Holding an honest effort without stopping — the second lap of the 800.",
         track: { title: "Continuous tempo",
-          blocks: [{ h: "Main set", items: ["Continuous tempo | " + n(18) + " min · [[" + mile(z.thresh[1]) + "]] per mile, [[" + fmt(z.thresh[1]) + "]] per lap"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          blocks: [{ h: "Main set", items: ["Continuous tempo | " + n(12) + " min · [[" + mile(z.thresh[1]) + "]] per mile, [[" + fmt(z.thresh[1]) + "]] per lap"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
           feel: "Locked in, but you could go a few more minutes at the end. Not a race.",
-          why: "Same job as the 1000s with no breaks.", src: "Haugen et al. 2021" },
+          why: "Same job as the 600s with no breaks.", src: "Haugen et al. 2021" },
         gym: { title: "Steady bike", blocks: [{ h: "Main set", items: ["Bike or rower intervals | 2 × 10 min hard · 3 min easy"] }], feel: "Comfortably hard.", why: "Same engine, less pounding.", src: "Haugen et al. 2021" },
         suggest: "track"
       },
       fast400s: {
         type: "high", focus: "800 day", why: "The top of your engine — the fastest pace it can supply.",
         track: { title: "Fast 400s",
-          blocks: [{ h: "Main set", items: ["Fast 400s | " + n(6) + " × 400 m · [[" + rng(z.fast[0], z.fast[1]) + "]] each · jog 2:30 · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          blocks: [{ h: "Main set", items: ["Fast 400s | " + n(5) + " × 400 m · [[" + rng(z.fast[0], z.fast[1]) + "]] each · jog 2:30 · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
           feel: "Hard. The last one should feel tough but like one more was possible. One more than 3 s slow? That was your last.",
           why: "Turns a fast first lap into a fast whole race.", src: "Haugen et al. 2021" },
         gym: { title: "Bike or rower intervals", blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(6) + " × 2 min hard · 2 min easy"] }], feel: "Hard but repeatable.", why: "Same idea as the track session.", src: "Haugen et al. 2021" },
@@ -477,7 +473,7 @@
       pace300s: {
         type: "high", focus: "800 day", why: "Teaches your legs exactly what goal 800 pace feels like.",
         track: { title: "Goal-pace 300s",
-          blocks: [{ h: "Main set", items: ["Goal-pace 300s | " + n(6) + " × 300 m · [[" + fmt(at(z.g800, 300)) + "]] each · walk 3 min · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          blocks: [{ h: "Main set", items: ["Goal-pace 300s | " + n(5) + " × 300 m · [[" + fmt(at(z.g800, 300)) + "]] each · walk 3 min · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
           feel: "The first two feel almost too easy. The last two feel like racing. Missing pace by the fourth? Run the rest 1–2 s slower rather than resting more.",
           why: "On race day goal pace becomes a rhythm you already know instead of a guess.", src: "Haugen et al. 2021" },
         gym: { title: "Bike or rower intervals", blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(6) + " × 1 min hard · 2 min easy"] }], feel: "Hard.", why: "Pace work really needs the track. Use this only if you can't get there.", src: "Haugen et al. 2021" },
@@ -486,7 +482,7 @@
       broken: {
         type: "high", focus: "800 day", why: "The last 200 of an 800 — tired, out of air, still running fast.",
         track: { title: "Broken 800s",
-          blocks: [{ h: "Main set", items: ["Broken 800s | " + n(3) + " sets · 400 m in [[" + fmt(z.g800) + "]], rest 45 s, then 200 m in [[" + fmt(at(z.g800, 200) - 1.5) + "]] · 8 min between sets · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          blocks: [{ h: "Main set", items: ["Broken 800s | " + n(2) + " sets · 400 m in [[" + fmt(z.g800) + "]], rest 45 s, then 200 m in [[" + fmt(at(z.g800, 200) - 1.5) + "]] · 8 min between sets · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
           feel: "That 200 after the short rest is supposed to hurt. That's the point.",
           why: "The closest thing to racing that isn't a race.", src: "Haugen et al. 2021" },
         gym: { title: "Bike or rower intervals", blocks: [{ h: "Main set", items: ["Bike or rower intervals | 3 × (90 s hard, 45 s easy, 45 s all-out) · 5 min easy between"] }], feel: "Very hard.", why: "Race-specific work really needs the track.", src: "Haugen et al. 2021" },
@@ -527,7 +523,7 @@
       long: {
         type: "long", focus: "Long run", why: "Durability. This is what shows up as a stronger second lap.",
         track: { title: "Long run",
-          blocks: [{ h: "Run", items: ["Long run | " + (v < 1 ? "35–40" : "45–55") + " min · [[" + mileR(z.easy) + "]] per mile · last 5 min can be [[" + mileR(z.steady) + "]]"] }],
+          blocks: [{ h: "Run", items: ["Long run | " + (v < 1 ? "30–35" : "40–45") + " min · [[" + mileR(z.easy) + "]] per mile · last 5 min can be [[" + mileR(z.steady) + "]]"] }],
           feel: "Comfortable for the first half hour, honest work at the end.",
           why: "Your times drop off as races get longer. That points at durability, and this is the session that builds it.", src: "Haugen et al. 2021" },
         gym: { title: "Long easy cardio", blocks: [{ h: "Cardio", items: ["Bike or elliptical | " + (v < 1 ? 35 : 50) + " min easy"] }], feel: "Easy the whole way.", why: "Same aerobic work, no pounding. Good if something is sore.", src: "Haugen et al. 2022" },
@@ -578,11 +574,11 @@
 
   const BLOCKS = [
     { name: "Build the engine", min: 20, max: 999,
-      blurb: "Far out. Mostly aerobic, with short hill sprints to keep your speed.",
-      week: (alt) => ["hillSprints", "easyStrength", "hills", "strides", "thresh", "long"] },
+      blurb: "Far out. Mostly aerobic, with short sprints to keep your speed.",
+      week: (alt) => ["speedFlat", "easyStrength", "strong45s", "strides", "thresh", "long"] },
     { name: "Engine + speed", min: 12, max: 19,
       blurb: "Still building the engine, now with real 400 speed endurance once a week.",
-      week: (alt) => ["hillSprints", "easyStrength", "fast150s", "strides", alt ? "fast400s" : "thresh", "long"] },
+      week: (alt) => ["speedFlat", "easyStrength", "fast150s", "strides", alt ? "fast400s" : "thresh", "long"] },
     { name: "Turn speed into races", min: 6, max: 11,
       blurb: "Race-pace work for both events. Top speed comes back every week.",
       week: (alt) => ["topSpeed", "easyStrength", "fast200s", "strides", alt ? "thresh" : "pace300s", "long"] },
@@ -643,7 +639,6 @@
   let currentPlan = null;
 
   Object.keys(FIELDS).forEach((id) => { $(id).value = prsRaw[id] || DEFAULTS[id]; });
-  $("hill").value = opts.hill || "yes";
   $("meet").value = meetStr;
 
   function readPRs() {
@@ -746,8 +741,7 @@
 
   function render() {
     const z = zones(readPRs());
-    const o = { hill: $("hill").value };
-    save("titus.opts", o);
+    const o = {};
     renderPaces(z);
     renderRace(z);
 
@@ -928,7 +922,6 @@
     save("titus.done", done); render();
   };
   $("meet").addEventListener("change", () => { if (!$("meet").value) return; meetStr = $("meet").value; save("titus.meet2", meetStr); render(); });
-  $("hill").addEventListener("change", render);
   Object.keys(FIELDS).forEach((id) => { $(id).addEventListener("change", render); });
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") render(); });
 

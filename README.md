@@ -6,15 +6,15 @@ A single-page phone app for a high-school runner doing both the 400 and the 800.
 
 | Day | What | Type |
 |-----|------|------|
-| Mon | Speed (hill sprints → top speed) | Hard |
+| Mon | Speed (short + resisted sprints → top speed) | Hard |
 | Tue | Easy — Gym version is the strength day | Easy |
-| Wed | 400 day (hill repeats → fast 150s → fast 200s → 300 + 100s) | Hard |
+| Wed | 400 day (strong 45s → fast 150s → fast 200s → 300 + 100s) | Hard |
 | Thu | Easy run + strides | Easy |
-| Fri | 800 day (1000s / fast 400s → goal-pace 300s → broken 800s) | Hard |
+| Fri | 800 day (600s / fast 400s → goal-pace 300s → broken 800s) | Hard |
 | Sat | Long run | Easy |
 | Sun | Off | Rest |
 
-Never two hard days in a row, at least one full day off.
+Never two hard days in a row, at least one full day off. The track is flat, so track days never use hills — resisted sprints use the ExerGenie or Activator belt. Volumes are kept to what suits a 15-year-old.
 
 **Track or Gym, every day.** Pick one. The suggested one is marked. Gym versions use a normal weight room and a bike or rower; on race-specific days they say plainly that the track version is better.
 
