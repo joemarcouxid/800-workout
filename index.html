@@ -1,662 +1,939 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#12100E">
-<title>Titus — Speed-Type 800</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16181d">
+<title>Titus — 400 / 800 Plan</title>
 <style>
-  :root{
-    --ink:#12100E; --surface:#1B1815; --surface-2:#241F1B;
-    --clay:#C9462C; --clay-bright:#E85A34; --lane:#EDE7DD; --muted:#8B8178; --line:#332C26;
-    --speed:#E85A34; --engine:#4A93BF; --easy:#4FA88A; --meet:#E8B23A; --off:#6E655D;
+  :root {
+    --bg: #f3f4f6; --card: #ffffff; --ink: #16181d; --soft: #5b6270; --line: #e2e5ea;
+    --hard: #d6402b; --hard-bg: #fdecea;
+    --easy: #2a6fdb; --easy-bg: #e9f1fd;
+    --long: #1f8a70; --long-bg: #e6f5f0;
+    --rest: #8a919e; --rest-bg: #eef0f3;
+    --race: #7c3aed; --race-bg: #f2ebfe;
+    --done: #1f9d55;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--ink);color:var(--lane);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  body{min-height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 64px}
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; font-size: 17px; line-height: 1.45; padding-bottom: env(safe-area-inset-bottom); }
+  .wrap { width: min(640px, 100%); margin: 0 auto; padding: 0 14px; }
+  button { font: inherit; color: inherit; }
 
-  .masthead{padding:20px 0 16px;border-bottom:2px solid var(--clay);margin-bottom:20px}
-  .tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.14em;color:var(--ink);background:var(--clay);padding:3px 9px;border-radius:2px;text-transform:uppercase}
-  h1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(34px,11vw,46px);line-height:.94;letter-spacing:-.01em;margin-top:11px;text-transform:uppercase}
-  h1 .accent{color:var(--clay-bright)}
-  .strap{font-size:13.5px;color:var(--muted);line-height:1.55;margin-top:10px}
+  .top { background: var(--ink); color: #fff; padding: calc(10px + env(safe-area-inset-top)) 0 12px; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .top h1 { font-size: 20px; margin: 0; }
+  .gear { background: none; border: 1px solid rgba(255,255,255,.35); color: #fff; border-radius: 999px; padding: 5px 13px; font-size: 14px; cursor: pointer; }
+  .phase { margin-top: 10px; }
+  .phase-name { font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .6px; }
+  .phase-sub { font-size: 14px; color: #c9ced8; }
+  .phase-blurb { font-size: 14px; color: #c9ced8; margin: 6px 0 0; }
+  .track { margin-top: 8px; height: 6px; background: rgba(255,255,255,.15); border-radius: 99px; overflow: hidden; }
+  .track i { display: block; height: 100%; background: #fff; border-radius: 99px; }
 
-  .box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
-  .box > label{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
-  input[type=date]{width:100%;background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'Inter';font-size:17px;font-weight:600;padding:13px;border-radius:10px;min-height:50px;-webkit-appearance:none;appearance:none}
-  input[type=date]:focus,select:focus{outline:none;border-color:var(--clay)}
+  .weeknav { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 8px; }
+  .weeknav button { background: var(--card); border: 1px solid var(--line); border-radius: 10px; width: 44px; height: 40px; font-size: 18px; cursor: pointer; }
+  .weeknav .lbl { text-align: center; font-weight: 600; font-size: 15px; }
+  .weeknav .lbl small { display: block; font-weight: 400; color: var(--soft); font-size: 13px; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .days button { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 0 7px; cursor: pointer; line-height: 1.15; font-size: 13px; color: var(--soft); border-top: 4px solid var(--rest); }
+  .days button b { display: block; font-size: 16px; color: var(--ink); }
+  .days button.high { border-top-color: var(--hard); }
+  .days button.low { border-top-color: var(--easy); }
+  .days button.long { border-top-color: var(--long); }
+  .days button.race { border-top-color: var(--race); }
+  .days button.sel { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .days button.sel b { color: #fff; }
+  .days button.today:not(.sel) { outline: 2px solid var(--ink); outline-offset: -1px; }
+  .days button .dot { display: block; height: 6px; margin-top: 3px; font-size: 11px; }
+  .days button.alldone .dot::before { content: "✓"; color: var(--done); font-weight: 700; }
+  .days button.sel.alldone .dot::before { color: #8fe3b0; }
+  .mix { font-size: 13px; color: var(--soft); text-align: center; margin: 8px 0 0; }
 
-  details.fold{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
-  details.fold > summary{list-style:none;cursor:pointer;padding:15px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:10px}
-  details.fold > summary::-webkit-details-marker{display:none}
-  details.fold > summary:after{content:'+';font-size:20px;color:var(--clay-bright);flex:0 0 auto}
-  details.fold[open] > summary:after{content:'\2013'}
-  summary:focus-visible{outline:2px solid var(--clay-bright);outline-offset:-2px}
-  .foldbody{padding:0 16px 16px}
+  .day { background: var(--card); border-radius: 16px; margin: 14px 0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .band { padding: 14px 16px; }
+  .band.high { background: var(--hard-bg); } .band.low { background: var(--easy-bg); } .band.long { background: var(--long-bg); }
+  .band.rest { background: var(--rest-bg); } .band.race { background: var(--race-bg); }
+  .kind { font-size: 13px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+  .band.high .kind { color: var(--hard); } .band.low .kind { color: var(--easy); } .band.long .kind { color: var(--long); }
+  .band.rest .kind { color: var(--rest); } .band.race .kind { color: var(--race); }
+  .focus { font-size: 30px; font-weight: 800; line-height: 1.05; margin: 4px 0 6px; }
+  .why { margin: 0; color: var(--soft); font-size: 15px; }
 
-  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
-  .row span{font-size:15px}
-  .row input{width:104px;background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'IBM Plex Mono',monospace;font-size:15px;padding:10px;border-radius:8px;text-align:right}
-  .row select{background:var(--ink);border:1.5px solid var(--line);color:var(--lane);font-family:'Inter';font-size:14px;padding:10px;border-radius:8px;max-width:56%}
-  .row input:focus{outline:none;border-color:var(--clay)}
-  .hint{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.55}
+  .choose { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px 16px 4px; }
+  .choose button { border: 2px solid var(--line); background: var(--card); border-radius: 12px; padding: 10px 6px 9px; font-weight: 700; font-size: 17px; cursor: pointer; }
+  .choose button span { display: block; font-weight: 400; font-size: 12px; color: var(--soft); }
+  .choose button.on { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .choose button.on span { color: #c9ced8; }
 
-  .countbar{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px}
-  .cell{flex:1;padding:14px 8px;text-align:center;border-right:1px solid var(--line)}
-  .cell:last-child{border-right:none} .cell.wide{flex:1.7}
-  .big{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28px;line-height:1;color:var(--clay-bright)}
-  .cell.wide .big{font-size:18px;color:var(--lane);line-height:1.15}
-  .lbl{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
-  .blurb{font-size:14.5px;line-height:1.6;color:#C3B9AD;margin-bottom:20px;padding:0 2px}
+  .session { padding: 6px 16px 16px; }
+  .stitle { font-size: 19px; font-weight: 700; margin: 12px 0 2px; }
+  details.warm { margin: 8px 0 4px; background: var(--bg); border-radius: 10px; padding: 8px 12px; }
+  details.warm summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+  details.warm ul { margin: 6px 0 2px; padding-left: 18px; font-size: 15px; }
+  .bh { font-size: 12px; font-weight: 800; letter-spacing: .9px; text-transform: uppercase; color: var(--soft); margin: 16px 0 4px; }
+  .step { display: grid; grid-template-columns: 34px 1fr auto; gap: 0 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); }
+  .tick { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #c3c8d1; background: none; cursor: pointer; display: grid; place-items: center; font-size: 16px; color: transparent; padding: 0; margin-top: 1px; }
+  .step.done .tick { background: var(--done); border-color: var(--done); color: #fff; }
+  .step.done .name, .step.done .dose { opacity: .45; }
+  .name { font-weight: 650; font-size: 17px; }
+  .dose { font-size: 16px; color: var(--soft); }
+  .dose b { color: var(--ink); font-weight: 600; }
+  .dose .pace { display: inline-block; font-weight: 700; color: var(--hard); background: var(--hard-bg); border-radius: 6px; padding: 0 6px; }
+  .info { background: none; border: 1px solid var(--line); border-radius: 999px; width: 30px; height: 30px; cursor: pointer; color: var(--soft); font-size: 14px; font-weight: 700; }
+  .explain { grid-column: 2 / 4; margin-top: 6px; font-size: 15px; background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+  .timer { grid-column: 2 / 4; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; font-size: 14px; color: var(--soft); }
+  .timer input { width: 80px; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; margin-left: 6px; }
+  .feel, .whybox { font-size: 15px; border-radius: 10px; padding: 10px 12px; margin-top: 14px; }
+  .feel { background: var(--bg); }
+  .feel b, .whybox b { display: block; font-size: 12px; letter-spacing: .8px; text-transform: uppercase; color: var(--soft); margin-bottom: 2px; }
+  .whybox { background: none; border: 1px solid var(--line); color: var(--soft); }
+  .src { display: inline-block; font-size: 12px; border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; margin-top: 6px; }
+  .next { font-size: 14px; color: var(--soft); padding: 0 16px 16px; margin: 0; }
+  .restmsg { padding: 6px 16px 18px; font-size: 16px; }
+  .restmsg ul { padding-left: 18px; margin: 6px 0; }
 
-  .weekhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0 12px;flex-wrap:wrap}
-  h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:21px;letter-spacing:.03em;text-transform:uppercase}
-  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
-  .legend span{display:flex;align-items:center;gap:5px}
-  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-  .dot.speed{background:var(--speed)}.dot.engine{background:var(--engine)}
-  .dot.easy{background:var(--easy)}.dot.race{background:var(--meet)}.dot.off{background:var(--off)}
+  .move { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 14px 16px 0; font-size: 14px; color: var(--soft); }
+  .move .movebtn { width: 100%; }
+  .move.blocked { background: var(--hard-bg); color: var(--hard); margin: 14px 16px 0; padding: 10px 12px; border-radius: 10px; }
+  .move.moved { justify-content: space-between; padding-top: 10px; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--easy); text-decoration: underline; cursor: pointer; font-weight: 600; }
 
-  details.day{background:var(--surface);border:1px solid var(--line);border-left-width:4px;border-radius:14px;margin-bottom:9px;overflow:hidden}
-  details.day.speed{border-left-color:var(--speed)}details.day.engine{border-left-color:var(--engine)}
-  details.day.easy{border-left-color:var(--easy)}details.day.race{border-left-color:var(--meet)}
-  details.day.off{border-left-color:var(--off)}
-  details.day.isToday{border-color:var(--clay);border-left-color:var(--clay-bright)}
-  details.day > summary{list-style:none;cursor:pointer;padding:13px 14px;display:flex;align-items:center;gap:11px}
-  details.day > summary::-webkit-details-marker{display:none}
-  .dnum{flex:0 0 46px;text-align:center}
-  .dday{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-  .ddate{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#6E655D;margin-top:2px}
-  .isToday .dday{color:var(--clay-bright)}
-  .dmid{flex:1;min-width:0}
-  .dname{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.02em;text-transform:uppercase;line-height:1.15}
-  .dmeta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:5px}
-  .pill{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;padding:3px 7px;border-radius:20px}
-  .speed .pill.kind{background:rgba(232,90,52,.15);color:var(--speed)}
-  .engine .pill.kind{background:rgba(74,147,191,.15);color:var(--engine)}
-  .easy .pill.kind{background:rgba(79,168,138,.15);color:var(--easy)}
-  .race .pill.kind{background:rgba(232,178,58,.15);color:var(--meet)}
-  .off .pill.kind{background:rgba(110,101,93,.2);color:#A79C92}
-  .pill.done{background:rgba(79,168,138,.2);color:var(--easy)}
-  .pill.warn{background:rgba(232,178,58,.15);color:var(--meet)}
-  .chev{flex:0 0 auto;color:var(--muted);font-size:19px;line-height:1}
-
-  .dbody{border-top:1px solid var(--line)}
-  .seg{padding:13px 15px;border-bottom:1px solid var(--line)}
-  .seg:last-child{border-bottom:none}
-  .seg-h{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-  .seg-c{font-size:14.5px;line-height:1.6;color:#DCD3C7}
-  .seg-c b{color:var(--lane);font-weight:600}
-  .seg-c em{font-family:'IBM Plex Mono',monospace;font-style:normal;font-weight:500;color:var(--lane);background:var(--surface-2);padding:1px 5px;border-radius:3px;white-space:nowrap}
-  .seg.why .seg-c{color:#A79C92;font-size:13.5px}
-  .src{display:inline-block;font-size:10.5px;font-family:'IBM Plex Mono',monospace;color:var(--muted);border:1px solid var(--line);padding:2px 6px;border-radius:4px;margin-top:8px}
-
-  .didbtn{display:block;width:calc(100% - 30px);background:var(--surface-2);border:1px solid var(--line);color:var(--lane);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;padding:14px;border-radius:10px;cursor:pointer;margin:13px 15px 15px}
-  .didbtn:hover{background:#2E2822;border-color:var(--clay)}
-  .didbtn:focus-visible{outline:2px solid var(--clay-bright);outline-offset:2px}
-  .didbtn.on{background:rgba(79,168,138,.13);border-color:var(--easy);color:var(--easy);cursor:default}
-
-  .reset{width:100%;background:none;border:1px solid var(--line);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:12px;border-radius:10px;cursor:pointer;margin-top:12px}
-  .reset:hover{color:var(--lane);border-color:var(--clay)}
-
-  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:17px 16px;margin-top:22px}
-  .panel h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
-  .panel p.sub{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:14px}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 6px 8px 0;border-bottom:1px solid var(--line)}
-  th.r,td.r{text-align:right;padding-right:0}
-  td{padding:11px 6px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
-  tr:last-child td{border-bottom:none}
-  .zn{font-weight:600;color:var(--lane)}
-  .zc{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:3px}
-  td.num{font-family:'IBM Plex Mono',monospace;white-space:nowrap;color:var(--lane)}
-
-  .splits{display:flex;gap:8px;margin-top:12px}
-  .split{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 4px;text-align:center}
-  .split .s-t{font-family:'IBM Plex Mono',monospace;font-size:17px;color:var(--meet)}
-  .split .s-l{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:5px}
-
-  .note{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:12px;font-size:13.5px;line-height:1.65;color:#B5AA9E}
-  .note b{color:var(--lane)}
-  .note ol{margin:8px 0 0 18px} .note li{margin-bottom:9px}
-  .rule{height:1px;background:var(--line);margin-top:13px}
-  .ref{font-size:12.5px;line-height:1.6;color:#A79C92;padding:11px 0;border-top:1px solid var(--line)}
-  .ref b{color:var(--lane);font-weight:600}
+  .panel, details.fold { background: var(--card); border-radius: 16px; padding: 14px 16px; margin: 14px 0; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .panel h2 { font-size: 19px; margin: 0 0 10px; }
+  details.fold summary { cursor: pointer; font-weight: 700; font-size: 17px; }
+  details.fold[open] summary { margin-bottom: 10px; }
+  .field { display: block; margin-bottom: 12px; font-weight: 600; font-size: 15px; }
+  .field input, .field select { display: block; width: 100%; margin-top: 4px; font: inherit; font-weight: 400; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); min-height: 46px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+  .btn { display: inline-block; background: var(--ink); color: #fff; border: 0; border-radius: 10px; padding: 12px 18px; font-weight: 700; cursor: pointer; }
+  .btn.ghost { background: none; color: var(--ink); border: 1px solid var(--line); font-weight: 600; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hint { font-size: 14px; color: var(--soft); margin: 4px 0 12px; }
+  .key { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .key li { padding: 7px 0; border-top: 1px solid var(--line); }
+  .key b { display: inline-block; min-width: 118px; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--soft); padding: 0 6px 6px 0; }
+  td { padding: 9px 6px 9px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  td.r, th.r { text-align: right; padding-right: 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .zc { font-size: 13px; color: var(--soft); }
+  .splits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0 14px; }
+  .split { background: var(--bg); border-radius: 10px; padding: 10px 4px; text-align: center; }
+  .split b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .split span { font-size: 12px; color: var(--soft); }
+  .ref { font-size: 14px; color: var(--soft); padding: 9px 0; border-top: 1px solid var(--line); }
+  .ref b { color: var(--ink); }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="masthead">
-    <span class="tag">Speed-Type 800</span>
-    <h1>Titus<br><span class="accent">Training Plan</span></h1>
-    <p class="strap">Built for a runner whose sprint speed is ahead of his engine. Everything here aims at one thing: growing the engine without giving up the speed.</p>
-  </header>
 
-  <div class="box">
-    <label for="date">Next Big Meet</label>
-    <input type="date" id="date" />
-  </div>
-
-  <details class="fold">
-    <summary>My Times</summary>
-    <div class="foldbody">
-      <div class="row"><span>200 m</span><input id="p2" value="24.91"></div>
-      <div class="row"><span>400 m</span><input id="p4" value="53.78"></div>
-      <div class="row"><span>800 m</span><input id="p8" value="2:04.23"></div>
-      <div class="row"><span>Mile</span><input id="pm" value="5:04"></div>
-      <div class="row"><span>Goal 800 m</span><input id="pg" value="2:00"></div>
-      <p class="hint">Every time in this app is worked out from these. Run a personal best, change the number, and the whole plan moves with you. Type them like <b>2:04</b> or <b>53.78</b>.</p>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <h1>Titus · 400 / 800</h1>
+      <button class="gear" id="gearBtn" type="button">Settings</button>
     </div>
+    <div class="phase" id="phaseBox">
+      <div class="phase-name" id="phaseName"></div>
+      <div class="phase-sub" id="phaseSub"></div>
+      <div class="track"><i id="phaseBar"></i></div>
+      <p class="phase-blurb" id="phaseBlurb"></p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="panel" id="settings" hidden>
+    <h2>Settings</h2>
+    <label class="field">Next big meet <input type="date" id="meet"></label>
+    <h2 style="font-size:16px;margin:4px 0 2px">My times</h2>
+    <p class="hint">Every target time in the app comes from these. Run a PR, change the number, and the whole plan moves with you. Type like <b>2:04</b> or <b>53.78</b>.</p>
+    <div class="grid2">
+      <label class="field">200 m <input id="p2" inputmode="decimal"></label>
+      <label class="field">400 m <input id="p4" inputmode="decimal"></label>
+      <label class="field">800 m <input id="p8" inputmode="decimal"></label>
+      <label class="field">Mile <input id="pm" inputmode="decimal"></label>
+      <label class="field">Goal 400 <input id="pg4" inputmode="decimal"></label>
+      <label class="field">Goal 800 <input id="pg8" inputmode="decimal"></label>
+    </div>
+    <label class="field">Hill nearby?
+      <select id="hill"><option value="yes">Yes, I have a hill</option><option value="no">No, flat only</option></select>
+    </label>
+    <div class="row">
+      <button class="btn ghost" type="button" id="todayBtn">Go to today</button>
+      <button class="btn ghost" type="button" id="resetBtn">Clear this week's ticks</button>
+    </div>
+
+    <h2 style="margin-top:18px">How to read this</h2>
+    <ul class="key">
+      <li><b><span class="sw" style="background:var(--hard)"></span>Hard day</b> The work that makes you faster. Never two in a row.</li>
+      <li><b><span class="sw" style="background:var(--easy)"></span>Easy day</b> Truly easy. You can talk the whole time.</li>
+      <li><b><span class="sw" style="background:var(--long)"></span>Long run</b> Easy pace, just longer.</li>
+      <li><b>Track or Gym</b> Pick one each day. The suggested one is marked.</li>
+      <li><b>Red times</b> Your target for that rep, worked out from your PRs.</li>
+      <li><b>5 × 200 m</b> Five runs of 200 meters.</li>
+      <li><b>Leave 3 in the tank</b> Stop the set when you could still do 3 more good reps.</li>
+      <li><b>i</b> Tap it on any exercise for how to do it.</li>
+      <li><b>Time it</b> Type your time in the box. The app keeps your best.</li>
+      <li><b>Missed a day?</b> Open the workout you want and tap "Make this today's workout". The rest of the week shifts to fit.</li>
+      <li><b>Hurts?</b> Pain (not just tired) means stop and tell your coach or a parent.</li>
+    </ul>
+  </section>
+
+  <section id="planView">
+    <div class="weeknav">
+      <button type="button" id="prev" aria-label="Previous week">‹</button>
+      <div class="lbl" id="weekLbl"></div>
+      <button type="button" id="next" aria-label="Next week">›</button>
+    </div>
+    <div class="days" id="days"></div>
+    <p class="mix" id="mix"></p>
+    <article class="day" id="day"></article>
+  </section>
+
+  <details class="fold" id="pacesFold">
+    <summary>My paces</summary>
+    <div id="paceWrap"></div>
   </details>
 
   <details class="fold">
-    <summary>What I Can Train With</summary>
-    <div class="foldbody">
-      <div class="row"><span>Weights</span>
-        <select id="eq">
-          <option value="gym">Full gym or weight room</option>
-          <option value="home">Home gym: dumbbells, bands</option>
-          <option value="none">No equipment at all</option>
-        </select>
-      </div>
-      <div class="row"><span>Hills nearby</span>
-        <select id="hill">
-          <option value="yes">Yes, I have a hill</option>
-          <option value="no">No hill, flat only</option>
-        </select>
-      </div>
-      <p class="hint">Set these once. Every strength and hill session changes to match what you actually have.</p>
-    </div>
+    <summary>Race plans</summary>
+    <div id="raceWrap"></div>
   </details>
 
-  <div class="countbar">
-    <div class="cell"><div class="big" id="cWeeks">&mdash;</div><div class="lbl">Weeks Out</div></div>
-    <div class="cell"><div class="big" id="cDays">&mdash;</div><div class="lbl">Days Out</div></div>
-    <div class="cell wide"><div class="big" id="cPhase">&mdash;</div><div class="lbl">Current Block</div></div>
-  </div>
-  <div class="blurb" id="blurb"></div>
-
-  <div id="weekWrap"></div>
-  <button class="reset" id="resetBtn">Start The Week Over</button>
-
-  <section class="panel" id="paceWrap"></section>
-  <section class="panel" id="raceWrap"></section>
-
-  <div class="note">
-    <b>How to use this.</b> Tap any day to open it. Today opens by itself. If you end up doing a different day's session today &mdash; practice changed, weather, whatever &mdash; open that one and hit <b>"I did this one today instead."</b> The app moves it onto today and rebuilds the rest of the week around it, keeping your hard days apart and your day off where it belongs.
-    <div class="rule"></div>
-    <b style="display:block;margin-top:13px">Three things that matter more than any workout here.</b>
-    <ol>
-      <li><b>Easy days have to be genuinely easy.</b> If you run them medium-hard, your hard days stop working and you are just tired all the time. World-class distance runners do the large majority of their running slowly, and that is exactly why their hard sessions land.</li>
-      <li><b>Take the day off.</b> The international consensus on youth running says at least one full rest day every week, plus real breaks across the year. You are still growing. That day is when you actually get faster.</li>
-      <li><b>Eat enough and sleep.</b> Nine hours of sleep and enough food beats every session in this app. Not eating enough is the most common way young runners stall out or get hurt.</li>
-    </ol>
-    <div class="rule"></div>
-    <div style="margin-top:13px"><b>Pain is not the same as tired.</b> Sharp pain, pain in one exact spot, or pain that gets worse the longer you run &mdash; stop, and tell your coach or a parent. Nothing in here is worth an injury at 15.</div>
-  </div>
-
-  <details class="fold" style="margin-top:12px">
-    <summary>Where This Plan Comes From</summary>
-    <div class="foldbody">
-      <p class="hint" style="margin:0 0 4px">Every session shows a small tag naming where it comes from. Here they are in full.</p>
-
-      <div class="ref"><b>Sandford, Kilding, Ross &amp; Laursen (2019), Sports Medicine 49:843&ndash;852.</b> In elite male 800 m runners, maximum sprint speed and the anaerobic speed reserve &mdash; the gap between top sprint speed and aerobic speed &mdash; separate the very best, and 800 runners split into speed types, hybrids and endurance types. <b>This is why you are called a speed type, and why the plan never lets your sprint speed go.</b></div>
-
-      <div class="ref"><b>Sandford &amp; Stellingwerff (2019), "Question Your Categories."</b> Runners with almost identical 800 times can have completely different physiologies, so training should be built around the individual rather than a template. <b>This is why the plan runs off your numbers, not a generic 800 program.</b></div>
-
-      <div class="ref"><b>Haugen, Sandbakk, Enoksen, Seiler &amp; Tønnessen (2021), "Crossing the Golden Training Divide," Sports Medicine 51:1835&ndash;1854.</b> The main review of how world-class 800 and 1500 m runners actually train. 800 specialists do considerably more speed, strength, power and anaerobic work than 1500 runners while still doing a large amount of aerobic running. <b>This is the shape of your whole week.</b></div>
-
-      <div class="ref"><b>Haugen, Sandbakk, Seiler &amp; Tønnessen (2022), Sports Medicine Open 8:46.</b> Elite distance runners do roughly 80% or more of their total running volume at low intensity. <b>This is why so many of your days are easy runs.</b></div>
-
-      <div class="ref"><b>Blagrove, Howatson &amp; Hayes (2018), Sports Medicine 48:1117&ndash;1149</b>, plus <b>Blagrove et al. (2018), Med Sci Sports Exerc 50:1224&ndash;1232</b> on post-puberty teenage distance runners specifically. Two to three strength sessions a week benefit middle- and long-distance runners. <b>This is why lifting is in the plan and is not optional.</b></div>
-
-      <div class="ref"><b>Llanos-Lagos et al. (2024), Sports Medicine.</b> Heavy strength work and mixed strength methods improved running economy in middle- and long-distance runners; light-load and isometric-only work did much less. <b>This is why gym days use real load and low reps instead of endless high-rep circuits.</b></div>
-
-      <div class="ref"><b>Spencer &amp; Gastin (2001).</b> Energy system contribution by race: roughly 43% aerobic for the 400, 66% for the 800 and 84% for the 1500. <b>This is why building the engine is the fastest route to a better 800 &mdash; the 800 is already mostly aerobic.</b></div>
-
-      <div class="ref"><b>Youth Running Consensus Statement (2021), British Journal of Sports Medicine.</b> Guidelines for young runners: at least one rest day per week, planned breaks across the year, enough food, and training built around growth rather than copied from adults. <b>This is why there is a day off, and why nobody here is copying elite mileage or Norwegian double-threshold training.</b></div>
-
-      <div class="ref"><b>Coaching practice.</b> The overall build &mdash; big aerobic base first, race-specific work last &mdash; is classic Lydiard and Peter Coe periodisation. The short hill sprints and strides that protect sprint speed all year follow Charlie Francis and the ALTIS group (Dan Pfaff, Stuart McMillan, Danny Mackey), whose <i>Coaching the Endurance Events</i> curriculum covers the 800 upward.</div>
-
-      <p class="hint" style="margin-top:14px">A research summary is a starting point, not a prescription for one person. Your coach watches you run. This app does not.</p>
-    </div>
+  <details class="fold">
+    <summary>Three things that matter more than any workout</summary>
+    <ul class="key">
+      <li><b>Easy means easy.</b> If easy days turn medium-hard, the hard days stop working and you're just tired all the time.</li>
+      <li><b>Take the day off.</b> At least one full rest day a week. You're still growing — that day is when you get faster.</li>
+      <li><b>Eat and sleep.</b> Nine hours of sleep and enough food beat every session in this app.</li>
+    </ul>
   </details>
-</div>
+
+  <details class="fold">
+    <summary>Where this plan comes from</summary>
+    <div class="ref"><b>Sandford, Kilding, Ross &amp; Laursen (2019), Sports Medicine 49:843&ndash;852.</b> In elite male 800 m runners, maximum sprint speed and the anaerobic speed reserve &mdash; the gap between top sprint speed and aerobic speed &mdash; separate the very best, and 800 runners split into speed types, hybrids and endurance types. <b>This is why you are called a speed type, and why the plan never lets your sprint speed go.</b></div>
+<div class="ref"><b>Sandford &amp; Stellingwerff (2019), "Question Your Categories."</b> Runners with almost identical 800 times can have completely different physiologies, so training should be built around the individual rather than a template. <b>This is why the plan runs off your numbers, not a generic 800 program.</b></div>
+<div class="ref"><b>Haugen, Sandbakk, Enoksen, Seiler &amp; Tønnessen (2021), "Crossing the Golden Training Divide," Sports Medicine 51:1835&ndash;1854.</b> The main review of how world-class 800 and 1500 m runners actually train. 800 specialists do considerably more speed, strength, power and anaerobic work than 1500 runners while still doing a large amount of aerobic running. <b>This is the shape of your whole week.</b></div>
+<div class="ref"><b>Haugen, Sandbakk, Seiler &amp; Tønnessen (2022), Sports Medicine Open 8:46.</b> Elite distance runners do roughly 80% or more of their total running volume at low intensity. <b>This is why so many of your days are easy runs.</b></div>
+<div class="ref"><b>Blagrove, Howatson &amp; Hayes (2018), Sports Medicine 48:1117&ndash;1149</b>, plus <b>Blagrove et al. (2018), Med Sci Sports Exerc 50:1224&ndash;1232</b> on post-puberty teenage distance runners specifically. Two to three strength sessions a week benefit middle- and long-distance runners. <b>This is why lifting is in the plan and is not optional.</b></div>
+<div class="ref"><b>Llanos-Lagos et al. (2024), Sports Medicine.</b> Heavy strength work and mixed strength methods improved running economy in middle- and long-distance runners; light-load and isometric-only work did much less. <b>This is why gym days use real load and low reps instead of endless high-rep circuits.</b></div>
+<div class="ref"><b>Spencer &amp; Gastin (2001).</b> Energy system contribution by race: roughly 43% aerobic for the 400, 66% for the 800 and 84% for the 1500. <b>This is why building the engine is the fastest route to a better 800 &mdash; the 800 is already mostly aerobic.</b></div>
+<div class="ref"><b>Youth Running Consensus Statement (2021), British Journal of Sports Medicine.</b> Guidelines for young runners: at least one rest day per week, planned breaks across the year, enough food, and training built around growth rather than copied from adults. <b>This is why there is a day off, and why nobody here is copying elite mileage or Norwegian double-threshold training.</b></div>
+<div class="ref"><b>Coaching practice.</b> The overall build &mdash; big aerobic base first, race-specific work last &mdash; is classic Lydiard and Peter Coe periodisation. The short hill sprints and strides that protect sprint speed all year follow Charlie Francis and the ALTIS group (Dan Pfaff, Stuart McMillan, Danny Mackey), whose <i>Coaching the Endurance Events</i> curriculum covers the 800 upward.</div>
+<div class="ref"><b>Charlie Francis, ALTIS (Pfaff, McMillan) and Tony Holler.</b> Hard days and easy days kept apart, sprints done fresh with full rest, and the times written down. Speed endurance and special endurance for the 400 (fast 150s, 200s, 300 + 100s) use very few reps with very long rest. <b>This is why hard days never land back to back, and why the rest between fast reps is so long.</b></div>
+    <p class="hint" style="margin-top:10px">A research summary is a starting point, not a prescription for one person. Your coach watches you run. This app doesn't.</p>
+  </details>
+
+</main>
 
 <script>
-/* =====================================================================
-   Titus - Speed-Type 800
-   Rolling 7-day plan for a middle-distance runner whose sprint speed is
-   ahead of his aerobic engine. Targets computed from his own PRs.
-   Any session can be moved onto today; the week rebuilds around it.
-===================================================================== */
+(function () {
+  "use strict";
 
-var store = {
-  get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
-  set:function(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
-};
+  /* ================= dates + storage ================= */
 
-function parseT(s){
-  if(s==null) return 0;
-  var t = String(s).trim().replace(/\s/g,'');
-  if(t.indexOf(':')>-1){ var p=t.split(':'); return (parseFloat(p[0])||0)*60+(parseFloat(p[1])||0); }
-  return parseFloat(t)||0;
-}
-function T(sec){ var r=Math.round(sec), m=Math.floor(r/60), s=r%60; return m>0? m+':'+String(s).padStart(2,'0') : String(s); }
-function R(a,b){ return T(a)+'\u2013'+T(b); }
-function at(p,d){ return p*(d/400); }
-function atR(pr,d){ return R(at(pr[0],d),at(pr[1],d)); }
-function mi(p){ return T(p*4.02); }
-function miR(pr){ return mi(pr[0])+'\u2013'+mi(pr[1]); }
+  const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const DAYS_LONG = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const DAY_MS = 86400000;
+  const parseISO = (s) => { const p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); };
+  const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  const monday = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+  const addDays = (d, n) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() + n); return x; };
+  const daysBetween = (a, b) => Math.round((b - a) / DAY_MS);
+  const short = (d) => MONTHS[d.getMonth()] + " " + d.getDate();
 
-/* Slow zones from the mile PR, fast zones from the 400/800.
-   Conservative on purpose: he is 15 and the engine is the part
-   still being built. */
-function zones(pr){
-  var m = pr.mile/4.02;
-  return {
-    easy:[m*1.45,m*1.68], steady:[m*1.30,m*1.42], thresh:[m*1.21,m*1.27], fast:[m*1.01,m*1.07],
-    r800:pr.e8/2, g800:pr.goal/2, p400:pr.e4, p200:pr.e2,
-    stride:[pr.e2/2*1.15, pr.e2/2*1.23]
-  };
-}
+  const load = (k, f) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-/* ---------- gym work, matched to what he actually has ---------- */
-function lift(eq){
-  if(eq==='gym') return 'Squat or trap-bar deadlift <b>3 &times; 5</b>, leaving 3 reps in the tank. Then split squat <b>3 &times; 8</b> each leg, hamstring curl or Romanian deadlift <b>3 &times; 6</b>, calf raises <b>3 &times; 12</b>. Finish with box jumps <b>3 &times; 5</b>. Form over weight, every time.';
-  if(eq==='home') return 'Goblet squat holding a dumbbell or kettlebell <b>3 &times; 8</b>. Then split squat holding dumbbells <b>3 &times; 8</b> each leg, single-leg Romanian deadlift <b>3 &times; 8</b> each leg, calf raises off a stair <b>3 &times; 15</b>. Finish with jumps onto a bench or low wall <b>3 &times; 5</b>.';
-  return 'Split squats <b>3 &times; 12</b> each leg &mdash; hold a loaded backpack if you have one. Single-leg Romanian deadlift <b>3 &times; 10</b> each leg, slow on the way down. Calf raises off a stair <b>3 &times; 20</b>. Nordic curls <b>3 &times; 5</b> with someone holding your ankles. Finish with squat jumps <b>3 &times; 8</b>.';
-}
-function circuit(eq){
-  var w = (eq==='none') ? '' : ' (hold dumbbells if you have them)';
-  return 'Three rounds: 10 split squats each leg' + w + ', 8 push-ups, 10 glute bridges, 30-second plank, 10 jump squats. Then hamstrings: Romanian deadlifts <b>3 &times; 8</b> or Nordic curls <b>3 &times; 5</b>.';
-}
-var MOBILITY = 'Nothing heavy. Ten minutes of stretching, hip and ankle mobility, and easy core work.';
-var POWER = 'Light and fast only: jumps onto a box or bench <b>3 &times; 3</b>, standing long jumps <b>&times; 5</b>, and med-ball throws <b>&times; 6</b> if you have one. Nothing that leaves you sore.';
+  /* ================= times + paces ================= */
 
-/* ---------- the sessions ---------- */
-var SESSIONS = {
+  function parseT(s) {
+    if (s == null) return 0;
+    const t = String(s).trim().replace(/\s/g, "");
+    if (t.indexOf(":") > -1) { const p = t.split(":"); return (parseFloat(p[0]) || 0) * 60 + (parseFloat(p[1]) || 0); }
+    return parseFloat(t) || 0;
+  }
+  // Whole seconds for laps and longer, tenths for short reps.
+  function fmt(sec, tenths) {
+    if (tenths && sec < 60) return sec.toFixed(1);
+    const r = Math.round(sec), m = Math.floor(r / 60), s = r % 60;
+    return m > 0 ? m + ":" + String(s).padStart(2, "0") : String(s);
+  }
+  const at = (perLap, d) => perLap * (d / 400);
+  const rng = (a, b) => fmt(a) + "–" + fmt(b);
+  const mile = (perLap) => fmt(perLap * 4.02);
+  const mileR = (pr) => mile(pr[0]) + "–" + mile(pr[1]);
 
-easy: { name:'Easy Run', kind:'easy',
-  run:function(z){ return 'Run <b>30&ndash;35 minutes</b> at <em>'+miR(z.easy)+'</em> per mile. Grass, dirt or a trail if you can find one. Finish with <b>6 &times; 100 m strides</b> &mdash; fast but relaxed, about <em>'+R(z.stride[0],z.stride[1])+' seconds</em> each, walking back between them.'; },
-  feel:'Easy has to mean easy. You should be able to hold a full conversation the whole way. If you could not, you ran it too hard.',
-  why:'Most of your running belongs here. Elite distance runners do around 80% or more of their weekly running at low intensity, and it works precisely because it stays low.',
-  src:'Haugen et al. 2022',
-  gym:function(){ return MOBILITY; } },
+  const FIELDS = { p2: "e2", p4: "e4", p8: "e8", pm: "mile", pg4: "g4", pg8: "goal" };
+  const DEFAULTS = { p2: "24.91", p4: "53.78", p8: "2:04.23", pm: "5:04", pg4: "52.50", pg8: "2:00" };
 
-easyShort: { name:'Short Easy Run', kind:'easy',
-  run:function(z){ return 'Run <b>20&ndash;25 minutes</b> at <em>'+miR(z.easy)+'</em> per mile, then <b>4 &times; 100 m strides</b>.'; },
-  feel:'You should finish feeling better than when you started. If your legs are genuinely wrecked, take the day off instead &mdash; that is a real decision, not quitting.',
-  why:'A short slow run between two hard days keeps you loose and moves blood through your legs without adding any fatigue.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return MOBILITY; } },
-
-long: { name:'Long Run', kind:'easy',
-  run:function(z){ return 'Run <b>45&ndash;55 minutes</b> at <em>'+miR(z.easy)+'</em> per mile. Start at the slow end. If you feel good, pick the last 5 minutes up to <em>'+miR(z.steady)+'</em>.'; },
-  feel:'Comfortable for the first half hour, honest work in the last fifteen minutes.',
-  why:'Your times drop off the longer the race gets, which points at durability rather than speed. This is the session that fixes that, and it shows up as a stronger second lap.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return 'Nothing. Eat a real meal afterwards.'; } },
-
-hillSprints: { name:'Easy Run + Hill Sprints', kind:'speed',
-  run:function(z,o){ return o.hill==='yes'
-    ? 'Run <b>25&ndash;30 minutes easy</b>, then <b>8 &times; 10&ndash;12 second sprints up a hill</b>. Full effort, but keep your face and shoulders relaxed. <b>Walk all the way back down</b> &mdash; that is about 2 minutes rest, and it matters as much as the sprint does. Jog 8 minutes to finish.'
-    : 'No hill, so do these on flat grass: run <b>25&ndash;30 minutes easy</b>, then <b>8 &times; 10&ndash;12 second sprints</b>, building over the first few steps rather than exploding from a stop. <b>Walk back and rest 2 minutes</b> between each. Stadium stairs or a treadmill on an incline work better if you have either. Jog 8 minutes to finish.'; },
-  feel:'Powerful, not exhausting. You should never be out of breath for long. If one feels slower than the first, you are done for the day &mdash; stop there.',
-  why:'Sprint speed is what separates the best 800 runners, and it fades if you only ever run distance. Ten seconds at a time protects it and costs you almost nothing aerobically. Running uphill is also easier on your hamstrings than the same effort on the flat.',
-  src:'Sandford et al. 2019',
-  gym:function(eq){ return lift(eq); } },
-
-strides: { name:'Easy Run + Strides', kind:'speed',
-  run:function(z){ return 'Run <b>30 minutes easy</b> at <em>'+miR(z.easy)+'</em>, then <b>8 &times; 100 m strides</b> at about <em>'+R(z.stride[0],z.stride[1])+' seconds</em>, walking back between each. A stride is a smooth fast 100 &mdash; not a race, and not a jog.'; },
-  feel:'Fast and smooth, never straining. If your jaw or shoulders are tight, ease off.',
-  why:'Same job as the hill sprints: keep your top-end speed alive through months of aerobic training without adding another hard session to the week.',
-  src:'Sandford et al. 2019',
-  gym:function(eq){ return circuit(eq); } },
-
-thresh: { load:'hard', name:'Comfortably Hard Intervals', kind:'engine',
-  run:function(z){ return 'Warm up 12 minutes easy plus 4 strides. Then <b>4&ndash;5 &times; 1000 m</b> in <em>'+atR(z.thresh,1000)+'</em> &mdash; that is <em>'+atR(z.thresh,400)+'</em> per lap &mdash; jogging <b>90 seconds</b> between each. Cool down 10 minutes easy.'; },
-  feel:'Comfortably hard. You could get three or four words out, not a full sentence. If you are gasping you have gone too fast and the session stops doing its job. If you cannot hold the pace by the fourth one, stop at four.',
-  why:'This is your single biggest opportunity. Your 800 and 400 are well ahead of your mile and 5K, which means the pace you can hold without blowing up is the part that is lagging. This session is what raises it.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return MOBILITY; } },
-
-threshShort: { load:'hard', name:'Comfortably Hard Intervals, Shorter', kind:'engine',
-  run:function(z){ return 'Warm up 12 minutes plus 4 strides. Then <b>3 &times; 1000 m</b> in <em>'+atR(z.thresh,1000)+'</em>, jogging 90 seconds between. Cool down 10 minutes.'; },
-  feel:'Same as the full version, but you leave with something in the tank. Close to a meet, that is on purpose.',
-  why:'Keeps the aerobic work going during a race week without leaving you flat on Saturday.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return MOBILITY; } },
-
-tempo: { load:'hard', name:'Comfortably Hard Run', kind:'engine',
-  run:function(z){ return 'Warm up 12 minutes plus 4 strides. Then run <b>15&ndash;20 minutes without stopping</b> at <em>'+mi(z.thresh[1])+'</em> per mile &mdash; <em>'+T(z.thresh[1])+'</em> per lap on the track. Cool down 10 minutes.'; },
-  feel:'Locked in and concentrating, but you could go a few more minutes at the end. It is not a race.',
-  why:'Same purpose as the intervals, with no breaks, which teaches you to hold an honest effort continuously &mdash; exactly what the second lap of an 800 asks of you.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return MOBILITY; } },
-
-hills: { load:'hard', name:'Hill Repeats', kind:'engine',
-  run:function(z,o){ return o.hill==='yes'
-    ? 'Warm up 12 minutes easy. Then <b>6&ndash;8 &times; 45 seconds up a hill</b>, strong &mdash; about the effort you would hold in a mile race, not a sprint. <b>Jog back down</b>, and that is your rest. Cool down 10 minutes.'
-    : 'No hill, so run these on the flat: warm up 12 minutes, then <b>6&ndash;8 &times; 45 seconds hard</b> at roughly <em>'+atR(z.fast,400)+'</em> per lap pace, jogging <b>90 seconds</b> between. Stadium stairs or a treadmill at 6&ndash;8% incline work too and are easier on your legs. Cool down 10 minutes.'; },
-  feel:'Breathing hard at the top, recovered by the time you are back at the bottom. If you are not recovered, take an extra minute.',
-  why:'Builds the engine and leg strength in one session, and on a hill the slower ground speed puts less strain on your hamstrings than the same effort on the flat.',
-  src:'Francis / ALTIS practice',
-  gym:function(eq){ return lift(eq); } },
-
-fast400s: { load:'hard', name:'Fast 400s', kind:'engine',
-  run:function(z){ return 'Warm up 12 minutes plus 4 strides. Then <b>6 &times; 400 m</b> in <em>'+atR(z.fast,400)+'</em>, jogging <b>2 minutes 30</b> between each. That is roughly your current mile race pace. Cool down 10 minutes.'; },
-  feel:'Hard. Number six should be tough, but you should finish feeling like a seventh was possible. If one comes in more than 3 seconds slow, that was your last.',
-  why:'This works the very top of your aerobic system &mdash; the fastest pace your engine can actually supply. For an 800 runner it is what turns a fast first lap into a fast whole race.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return POWER; } },
-
-pace300s: { load:'hard', name:'Goal-Pace 300s', kind:'speed',
-  run:function(z){ return 'Warm up 15 minutes plus <b>4 &times; 100 m</b> building gradually to fast. Then <b>6 &times; 300 m</b> in <em>'+T(at(z.g800,300))+'</em> &mdash; your goal 800 pace, <em>'+T(z.g800)+'</em> per lap &mdash; walking <b>3 minutes</b> between each. Cool down 10 minutes.'; },
-  feel:'The first two should feel almost too easy. That is correct. The last two should feel like race effort.',
-  why:'You are teaching your legs exactly what goal pace feels like, so on race day it is a rhythm you already know instead of a guess. If you cannot hit it by the fourth rep, run the rest a second or two slower rather than taking more rest.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return POWER; } },
-
-broken: { load:'hard', name:'Broken 800s', kind:'speed',
-  run:function(z){ return 'Warm up 15 minutes plus 4 building sprints. Then <b>3 sets of</b>: 400 m in <em>'+T(z.g800)+'</em>, <b>rest 45 seconds</b>, then 200 m in <em>'+T(at(z.g800,200)-1.5)+'</em>. Take <b>8 full minutes</b> between sets &mdash; walk, drink, breathe. Cool down 10 minutes.'; },
-  feel:'That 200 after the short rest is supposed to hurt. That is the whole point of the session.',
-  why:'It puts you in the last 200 of a race &mdash; tired, out of air, still needing to run fast &mdash; without costing you a full time trial. It is the closest thing to racing that is not a race.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return POWER; } },
-
-fast200s: { load:'hard', name:'Fast 200s', kind:'speed',
-  run:function(z){ return 'Warm up 15 minutes plus 4 building sprints. Then <b>5 &times; 200 m</b> in <em>'+T(at(z.p400,200)+1)+'</em> &mdash; about your 400 race pace &mdash; with <b>4 full minutes</b> between. Walk the rest, do not jog it. Cool down 12 minutes.'; },
-  feel:'Fast and smooth, not straining. The long rest is what keeps every rep quick.',
-  why:'Running faster than 800 pace is what makes 800 pace start to feel slow. This is where your 400 speed becomes an 800 weapon &mdash; the exact quality the research says separates the best 800 runners.',
-  src:'Sandford et al. 2019',
-  gym:function(){ return POWER; } },
-
-topSpeed: { load:'hard', name:'Top Speed Day', kind:'speed',
-  run:function(z){ return 'Full warm-up: 12 minutes jogging, drills, and <b>4 &times; 60 m</b> building to fast. Then <b>3 &times; 20 m at full speed</b> &mdash; build over 30 m first, then hold top speed for 20 &mdash; with <b>5&ndash;6 minutes</b> rest, and <b>2 &times; 60 m</b> from a standing start with <b>6&ndash;8 minutes</b> rest. Yes, really that much rest. Cool down 10 minutes.'; },
-  feel:'Every rep should feel like your fastest. If the fourth is slower than the first, the session is over. Any hamstring tightness &mdash; tightness, not soreness &mdash; stop straight away and go jog.',
-  why:'Your top sprint speed sets the ceiling everything else sits under. A 53-second 400 runner has a far higher 800 ceiling than a 58-second one, so it gets protected all year rather than only in spring.',
-  src:'Sandford et al. 2019',
-  gym:function(){ return POWER; } },
-
-grass100s: { name:'Easy 100s On Grass', kind:'easy',
-  run:function(z){ return 'Warm up 10 minutes. Then <b>2 sets of 8 &times; 100 m on grass</b> in <em>'+T(at(z.steady[1],100))+'&ndash;'+T(at(z.easy[1],100))+' seconds</em>, walking 30 seconds between reps and 3 minutes between sets.'; },
-  feel:'Never hard &mdash; about 70% effort. Controlled and springy, like an easy version of running fast.',
-  why:'Aerobic work and good running form at the same time, with almost no wear on your body. Safe even in a week that already has two hard days.',
-  src:'Francis / ALTIS practice',
-  gym:function(eq){ return circuit(eq); } },
-
-shortSharp: { name:'Short Sharp Session', kind:'speed',
-  run:function(z){ return 'Jog 12 minutes easy plus drills. Then <b>3 &times; 150 m</b> in <em>'+T(at(z.g800,150))+'</em> at goal pace, walking back and resting fully between each. Jog 6 minutes to finish.'; },
-  feel:'Quick and light. You should feel sharper leaving than arriving, never tired.',
-  why:'In the last week before a big meet the job is to stay sharp without spending anything. A few short reps at goal pace keep the rhythm in your legs while you recover.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return 'Stretch and sleep. Nothing else.'; } },
-
-preMeet: { name:'Day Before The Meet', kind:'easy',
-  run:function(z){ return 'Jog 10 minutes easy plus drills. Then <b>2 &times; 200 m</b> in <em>'+T(at(z.g800,200))+'</em> at goal pace, walking 3 minutes between, and <b>4 &times; 100 m</b> building to fast. Jog 5 minutes. Home inside 40 minutes.'; },
-  feel:'You should leave feeling like you could have done far more. That is exactly right.',
-  why:'The day before a race you cannot get any fitter, only more tired. This wakes your legs up without spending anything. Nothing new today &mdash; no new shoes, no new drills, no new food.',
-  src:'Haugen et al. 2021',
-  gym:function(){ return 'Stretch. Sleep. Lay your kit out tonight.'; } },
-
-race: { load:'hard', name:'Race Day, 800 m', kind:'race',
-  run:function(z){ return 'Start your warm-up <b>45 minutes before</b> your race: 12 minutes jogging, drills, 4 building sprints, spikes on, then <b>2 &times; 100 m</b> at race pace.<br><br><b>First 200:</b> <em>'+T(at(z.g800,200)-1.5)+'</em> &mdash; get out hard enough to be in a good position, then settle. Do not fight for the lead down the back straight.<br><b>At 400:</b> <em>'+T(z.g800-1)+'</em> &mdash; this should feel controlled, like you are holding something back.<br><b>At 600:</b> <em>'+T(at(z.g800,600)+1)+'</em> &mdash; stay tall, drive your arms, keep your face loose. The race is decided here.<br><b>Last 200:</b> everything you have got.'; },
-  feel:'Controlled for 600, brave for 200.',
-  why:'Speed-type 800 runners tend to race well from a fast, forward start and a strong finish rather than by running away from the field early. Your plan is to be in touch at the bell and win the last 200 &mdash; that is where a 53-second 400 pays you back.',
-  src:'Sandford et al. 2019',
-  gym:function(){ return 'Cool down 10&ndash;15 minutes jogging no matter how it went. Carbohydrate and fluid within 30 minutes, especially if you race again later in the day.'; } },
-
-raceXC: { load:'hard', name:'Race Day, Cross Country', kind:'race',
-  run:function(z){ return 'Warm up 15 minutes plus drills and 4 strides, finishing 10 minutes before the gun.<br><br><b>First mile:</b> <em>'+mi(z.thresh[1]*0.99)+'</em> &mdash; controlled. Everyone goes out too fast in cross country. Let them.<br><b>Second mile:</b> hold the effort and start picking people off. This is the mile won by whoever concentrates.<br><b>Third mile:</b> build to the finish, then sprint the last 200.'; },
-  feel:'Uncomfortable from the second mile on. That is normal and it is survivable.',
-  why:'Cross country is the cheapest aerobic fitness you will ever get, and aerobic fitness is your biggest gap. Nobody in that race has your last 200 &mdash; use it.',
-  src:'Spencer & Gastin 2001',
-  gym:function(){ return 'Cool down 10&ndash;15 minutes easy. Then eat properly.'; } },
-
-off: { name:'Day Off', kind:'off',
-  run:function(){ return '<b>No running and no lifting.</b> Walking, swimming or messing about with friends is all fine.'; },
-  feel:'Feeling restless is normal. Take it anyway.',
-  why:'The international consensus on youth running recommends at least one complete rest day every week. You are 15 and still growing &mdash; this is the day your body does the building, not the day you ran hard.',
-  src:'Youth Running Consensus 2021',
-  gym:function(){ return 'Nothing. Aim for nine hours of sleep.'; } }
-};
-
-function HARD(k){ return SESSIONS[k].load === 'hard'; }
-var PILL = { speed:'Speed', engine:'Engine', easy:'Easy', race:'Race', off:'Rest' };
-
-/* ---------- blocks, by how far out the meet is ---------- */
-var PHASES = [
-  { name:'Build The Engine', min:20, max:9999,
-    blurb:'You are a long way out, so this is the block that changes what you are capable of. Your sprint speed is already your weapon; the engine underneath it is what is missing. Nearly every day is aerobic, and the fast work is short and cheap - just enough to keep the speed you have.',
-    days:['hillSprints','thresh','easy','hills','easyShort','long','off'] },
-
-  { name:'Engine Plus Speed', min:12, max:19,
-    blurb:'Same aerobic emphasis, but now one session a week works the top of your engine at around mile pace, and the lifting gets heavier. Still no flat-out interval sessions - for you those are a bad trade right now.',
-    days:['hillSprints','thresh','strides','fast400s','easyShort','long','off'] },
-
-  { name:'Turn Speed Into 800s', min:6, max:11,
-    blurb:'The switch flips. Goal-pace running appears, real top-speed work comes back, and the comfortably-hard session stays because it is still your biggest opportunity. This is where a 53-second 400 starts becoming a fast second lap.',
-    days:['pace300s','strides','thresh','topSpeed','easyShort','long','off'] },
-
-  { name:'Sharpen', min:3, max:5,
-    blurb:'Race-specific. Less volume, higher quality, and the sessions start to look like pieces of an actual 800. All the aerobic work you have banked is what lets you sharpen without falling apart.',
-    days:['broken','easy','threshShort','strides','preMeet','race','off'] },
-
-  { name:'Race Weeks', min:1, max:2,
-    blurb:'Meets are the hard work now. One quality session early in the week, everything else keeps you fresh, and the race itself is the second hard effort.',
-    days:['pace300s','easy','easyShort','preMeet','race','grass100s','off'] },
-
-  { name:'Meet Week', min:0, max:0,
-    blurb:'Taper. Nothing new, nothing heavy, nothing long. You cannot get fitter this week - you can only turn up fresh or turn up tired. Choose fresh.',
-    days:['pace300s','easyShort','easy','preMeet','off','shortSharp','race'] }
-];
-
-/* ---------- scheduler ----------
-   Rolling 7 days starting today. If he tells the app he did a given
-   session today, it is pinned to day 0 and everything else reflows,
-   keeping hard days apart and the race on the actual meet date. */
-function buildWeek(phase, pinnedKey, meetOffset){
-  var slots = new Array(7), pool = phase.days.slice(), i;
-  for(i=0;i<7;i++) slots[i]=null;
-  function take(k){ var j=pool.indexOf(k); return j>-1 ? pool.splice(j,1)[0] : null; }
-  function filler(pl, sl){
-    var opts=['long','grass100s','tempo','easy','easyShort'], used=pl.concat(sl), n;
-    for(n=0;n<opts.length;n++){ if(used.indexOf(opts[n])===-1) return opts[n]; }
-    return 'easy';
+  /* Slow zones from the mile PR, fast zones from the 200/400/800.
+     Conservative on purpose: he is 15 and the engine is still being built. */
+  function zones(pr) {
+    const m = pr.mile / 4.02;
+    return {
+      easy: [m * 1.45, m * 1.68], steady: [m * 1.30, m * 1.42], thresh: [m * 1.21, m * 1.27], fast: [m * 1.01, m * 1.07],
+      r800: pr.e8 / 2, g800: pr.goal / 2, p400: pr.e4, g400: pr.g4, p200: pr.e2,
+      stride: [pr.e2 / 2 * 1.15, pr.e2 / 2 * 1.23]
+    };
   }
 
-  if(pinnedKey){ var pk = take(pinnedKey); if(pk) slots[0]=pk; }
+  /* ================= words ================= */
 
-  var raceKey = pool.indexOf('race')>-1 ? 'race' : (pool.indexOf('raceXC')>-1 ? 'raceXC' : null);
-  if(raceKey){
-    if(meetOffset>=0 && meetOffset<=6 && !slots[meetOffset]){
-      slots[meetOffset] = take(raceKey);
-      if(meetOffset>0 && !slots[meetOffset-1] && pool.indexOf('preMeet')>-1) slots[meetOffset-1] = take('preMeet');
-    } else {
-      take(raceKey); pool.push(filler(pool, slots));
-      if(take('preMeet')) pool.push(filler(pool, slots));
-    }
-  }
+  const L = (n) => "leave " + n + " in the tank";
 
-  if(pool.indexOf('preMeet')>-1){ take('preMeet'); pool.push(filler(pool, slots)); }
+  const WARM_RUN = ["Jog 10–12 min easy", "Drills, 20 m each: A-skips, high knees, butt kicks", "4 × 80 m build-ups, a little faster each time"];
+  const WARM_EASY = ["Start slower than you think you need to. The first 5 minutes are the warm-up."];
+  const WARM_GYM = ["Bike or elliptical 5–8 min easy", "Leg swings and walking lunges, 10 each", "Before each big lift, 2–3 lighter warm-up sets"];
 
-  var hard=[], soft=[];
-  for(i=0;i<pool.length;i++){ (HARD(pool[i]) ? hard : soft).push(pool[i]); }
-  for(i=0;i<7;i++){
-    if(slots[i]) continue;
-    var prevHard = i>0 && slots[i-1] && HARD(slots[i-1]);
-    var nextHard = i<6 && slots[i+1] && HARD(slots[i+1]);
-    if(!prevHard && !nextHard && hard.length) slots[i]=hard.shift();
-    else if(soft.length) slots[i]=soft.shift();
-    else slots[i]=hard.shift();
-  }
-  return slots;
-}
-
-/* ---------- state ---------- */
-function el(id){ return document.getElementById(id); }
-var FIELDS = { p2:'e2', p4:'e4', p8:'e8', pm:'mile', pg:'goal' };
-var FALLBACK = { e2:24.91, e4:53.78, e8:124.23, mile:304, goal:120 };
-function todayKey(){ return new Date().toISOString().slice(0,10); }
-var pinned=null, doneToday=false, openDay=0;
-
-(function boot(){
-  var prs = store.get('titus.prs');
-  if(prs){ try{ var o=JSON.parse(prs); for(var id in FIELDS){ if(o[id]) el(id).value=o[id]; } }catch(e){} }
-  var opts = store.get('titus.opts');
-  if(opts){ try{ var q=JSON.parse(opts); if(q.eq) el('eq').value=q.eq; if(q.hill) el('hill').value=q.hill; }catch(e){} }
-  var d = store.get('titus.meet');
-  if(d){ el('date').value=d; }
-  else { var n=new Date(); n.setDate(n.getDate()+84); el('date').value=n.toISOString().slice(0,10); }
-  var p = store.get('titus.pinned');
-  if(p){ try{ var r=JSON.parse(p); if(r.date===todayKey()){ pinned=r.key; doneToday=!!r.done; } }catch(e){} }
-})();
-
-function readPRs(){
-  var pr={}, raw={};
-  for(var id in FIELDS){
-    raw[id]=el(id).value;
-    var v=parseT(el(id).value);
-    pr[FIELDS[id]] = v>0 ? v : FALLBACK[FIELDS[id]];
-  }
-  store.set('titus.prs', JSON.stringify(raw));
-  return pr;
-}
-function readOpts(){
-  var o={ eq:el('eq').value, hill:el('hill').value };
-  store.set('titus.opts', JSON.stringify(o));
-  return o;
-}
-function phaseFor(w){ for(var i=0;i<PHASES.length;i++){ if(w>=PHASES[i].min && w<=PHASES[i].max) return PHASES[i]; } return PHASES[PHASES.length-1]; }
-
-var DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function render(){
-  var pr=readPRs(), o=readOpts(), z=zones(pr);
-  renderPaces(z); renderRace(z);
-
-  var val = el('date').value;
-  if(val) store.set('titus.meet', val);
-
-  var today = new Date(); today.setHours(0,0,0,0);
-  var daysOut = 84, weeksOut = 12;
-  if(val){
-    var meet = new Date(val+'T00:00:00');
-    daysOut = Math.round((meet-today)/86400000);
-    weeksOut = Math.max(0, Math.ceil(daysOut/7));
-  }
-  if(daysOut < 0){ daysOut = 0; weeksOut = 0; }
-
-  var phase = phaseFor(weeksOut);
-  el('cWeeks').textContent = weeksOut;
-  el('cDays').textContent  = daysOut;
-  el('cPhase').textContent = phase.name;
-  el('blurb').textContent  = phase.blurb;
-
-  var slots = buildWeek(phase, pinned, daysOut);
-  var html = '';
-
-  for(var i=0;i<7;i++){
-    var key = slots[i], s = SESSIONS[key];
-    var d = new Date(today); d.setDate(d.getDate()+i);
-    var isToday = (i===0);
-    var adjacent = (i>0 && HARD(key) && HARD(slots[i-1])) || (i<6 && HARD(key) && HARD(slots[i+1]));
-    var open = (i===openDay) ? ' open' : '';
-    var btn = isToday
-      ? (doneToday ? '<button class="didbtn on" disabled>&#10003; Done today</button>'
-                   : '<button class="didbtn" data-key="'+key+'">I did this today</button>')
-      : '<button class="didbtn" data-key="'+key+'">I did this one today instead</button>';
-
-    html += '<details class="day '+s.kind+(isToday?' isToday':'')+'"'+open+' data-i="'+i+'">'
-      + '<summary>'
-      + '<span class="dnum"><span class="dday">'+(isToday?'Today':DAYNAMES[d.getDay()])+'</span>'
-      + '<span class="ddate">'+d.getDate()+' '+MONTHS[d.getMonth()]+'</span></span>'
-      + '<span class="dmid"><span class="dname">'+s.name+'</span><span class="dmeta">'
-      + '<span class="pill kind">'+PILL[s.kind]+'</span>'
-      + (isToday && doneToday ? '<span class="pill done">Done</span>' : '')
-      + (adjacent ? '<span class="pill warn">Two hard days together</span>' : '')
-      + '</span></span><span class="chev">&#8964;</span></summary>'
-      + '<div class="dbody">'
-      + '<div class="seg"><div class="seg-h">Running</div><div class="seg-c">'+s.run(z,o)+'</div></div>'
-      + '<div class="seg"><div class="seg-h">Gym / Extra</div><div class="seg-c">'+s.gym(o.eq)+'</div></div>'
-      + '<div class="seg"><div class="seg-h">How it should feel</div><div class="seg-c">'+s.feel+'</div></div>'
-      + '<div class="seg why"><div class="seg-h">Why you are doing it</div><div class="seg-c">'+s.why+'<br><span class="src">'+s.src+'</span></div></div>'
-      + (adjacent ? '<div class="seg why"><div class="seg-c">Heads up: this lands next to another hard day. Swap it with an easy day if you can.</div></div>' : '')
-      + '</div>' + btn + '</details>';
-  }
-
-  el('weekWrap').innerHTML =
-    '<div class="weekhead"><h2>Next 7 Days</h2><div class="legend">'
-    + '<span><i class="dot speed"></i>Speed</span><span><i class="dot engine"></i>Engine</span>'
-    + '<span><i class="dot easy"></i>Easy</span><span><i class="dot race"></i>Race</span>'
-    + '<span><i class="dot off"></i>Rest</span></div></div>' + html;
-
-  var btns = el('weekWrap').querySelectorAll('.didbtn[data-key]');
-  for(var b=0;b<btns.length;b++){
-    btns[b].addEventListener('click', function(ev){
-      ev.preventDefault();
-      pinned = this.getAttribute('data-key');
-      doneToday = true; openDay = 0;
-      store.set('titus.pinned', JSON.stringify({ date: todayKey(), key: pinned, done: true }));
-      render();
-    });
-  }
-  var dets = el('weekWrap').querySelectorAll('details.day');
-  for(var t=0;t<dets.length;t++){
-    dets[t].addEventListener('toggle', function(){
-      if(this.open) openDay = parseInt(this.getAttribute('data-i'),10);
-    });
-  }
-}
-
-function renderPaces(z){
-  var rows = [
-    ['Easy','You can talk the whole way. Most of your running lives here.', atR(z.easy,400), miR(z.easy)+' / mi'],
-    ['Steady','Short sentences only. The end of a long run.', atR(z.steady,400), miR(z.steady)+' / mi'],
-    ['Comfortably hard','Three or four words, not a sentence. Your biggest opportunity.', atR(z.thresh,400), miR(z.thresh)+' / mi'],
-    ['Mile pace','Hard, but repeatable. The fast 400s.', atR(z.fast,400), atR(z.fast,200)+' / 200'],
-    ['Your 800 pace','What you run right now.', T(z.r800), T(at(z.r800,200))+' / 200'],
-    ['Goal 800 pace','What every race-pace session is built on.', T(z.g800), T(at(z.g800,200))+' / 200'],
-    ['Your 400 pace','Your weapon. The fast 200s live here.', T(z.p400), T(at(z.p400,200))+' / 200'],
-    ['Flat out','Hill sprints and top-speed runs. No target, just fast and relaxed.', '&mdash;', T(z.p200/2)+' / 100']
+  const HOW = [
+    ["flying", "Build up over 30 m, then hold top speed for the next 20 m. Time the fast 20 if someone can."],
+    ["standing 60", "Start standing, sprint 60 m all-out. Full rest after — 6–8 minutes."],
+    ["hill sprint", "Up a hill, all-out but relaxed in your face and shoulders. Walk all the way down — that's your rest, and it matters."],
+    ["flat sprint", "On grass, build over the first few steps and sprint the rest. Walk back and rest 2 minutes."],
+    ["hill repeat", "Strong uphill running for the time — about mile-race effort, not a sprint. Jog back down."],
+    ["strong 45s", "Hard running on the flat for the time, about mile-race effort. Jog 90 s between."],
+    ["strides", "Smooth fast 100s — not a race, not a jog. Relaxed jaw and shoulders. Walk back."],
+    ["1000", "Comfortably hard: you could say 3–4 words, not a sentence. Jog 90 s between."],
+    ["continuous", "Comfortably hard, no stopping. Locked in, but you could keep going a few more minutes."],
+    ["fast 400", "About mile race pace. Hard but repeatable. Jog the rest."],
+    ["fast 150", "At about 400 race pace. Fast but smooth. Walk the full rest."],
+    ["fast 200", "About 400 race pace. Walk the rest — don't jog it. The long rest keeps every rep fast."],
+    ["300 + 100", "Run the 300 at 400 race pace, rest exactly 60 s, then run 100 m as fast as you can hold form. This is the last 100 of a 400."],
+    ["goal-pace 300", "Your goal 800 pace. The first two feel too easy — that's right. The last two feel like racing."],
+    ["broken 800", "400 at goal 800 pace, rest 45 s, then 200 a bit faster. The 200 is supposed to hurt — it's the end of a race."],
+    ["goal-pace 150", "Quick and light at goal 800 pace. You should finish sharper than you started."],
+    ["long run", "Easy pace the whole way. If you feel good, the last 5 minutes can be a bit quicker."],
+    ["easy run", "Easy has to mean easy. You can hold a full conversation the whole way."],
+    ["easy 100s", "On grass at about 70% — controlled and springy. Walk 30 s between."],
+    ["bike sprint", "On a bike, air bike or rower: as hard as you possibly can for the time, then very easy until the next one."],
+    ["bike or rower intervals", "Hard but steady — you could say 3–4 words. Then very easy pedaling for the rest."],
+    ["bike or elliptical", "Easy the whole way. You should be able to talk."],
+    ["box jump", "Jump onto a box, land softly, step down. Jumping fast matters more than box height."],
+    ["broad jump", "Two-foot jump forward as far as you can. Land soft and stick it."],
+    ["pogo", "Small, quick bounces on the balls of your feet, knees nearly straight."],
+    ["med-ball", "Throw it as far as you can using your hips and legs, not just your arms."],
+    ["back squat", "Bar on your upper back, sit down to at least parallel, drive up. Use the safety pins."],
+    ["trap-bar deadlift", "Stand inside the hex bar, chest up, back flat, drive through the floor."],
+    ["split squat", "One foot forward, back foot up on a bench. Lower until your back knee nearly touches, drive up."],
+    ["rdl", "Knees soft, push your hips back, slide the weight down your thighs until you feel your hamstrings, stand up."],
+    ["nordic", "Kneel with your ankles held. Lower forward as slowly as you can, catch yourself with your hands."],
+    ["calf raise", "Up on your toes, lower slowly for 3 seconds. On a step for more range."],
+    ["kettlebell swing", "Hinge, swing the bell between your legs, snap your hips so it floats to chest height."],
+    ["core", "Plank 40 s, side plank 30 s each side, dead bugs 10 each side. Twice through."],
+    ["mobility", "Hip and ankle mobility and easy stretching. Nothing that hurts."]
   ];
-  var body='';
-  for(var i=0;i<rows.length;i++){
-    body += '<tr><td><div class="zn">'+rows[i][0]+'</div><div class="zc">'+rows[i][1]+'</div></td>'
-          + '<td class="num r">'+rows[i][2]+'</td><td class="num r">'+rows[i][3]+'</td></tr>';
+  const howTo = (name) => { const n = name.toLowerCase(); const hit = HOW.find(([k]) => n.includes(k)); return hit ? hit[1] : ""; };
+
+  /* ================= sessions ================= */
+  // Every training day has a Track version and a Gym version. He does one.
+  // Items are "Name | dose". {pace} in red: [[...]].
+
+  const LIFT = (heavy) => [
+    "Back squat or trap-bar deadlift | 3 sets of 5 · " + L(heavy ? 2 : 3),
+    "Split squat | 3 sets of 8 each leg · " + L(3),
+    "RDL | 3 sets of 6 · " + L(3),
+    "Calf raise | 3 sets of 12 · slow down",
+    "Nordics | 2 sets of 4"
+  ];
+
+  function SESSION(key, z, o, v) {
+    // v: volume scale (1 = normal, smaller near meets)
+    const n = (x) => Math.max(1, Math.round(x * v));
+    const hill = o.hill === "yes";
+
+    const easyGym = {
+      title: "Easy cardio + core",
+      blocks: [{ h: "Cardio", items: ["Bike or elliptical | 30 min easy"] }, { h: "After", items: ["Core | 10 min", "Mobility | 10 min"] }],
+      feel: "Easy. You should finish feeling better than when you started."
+    };
+
+    const S = {
+      /* ---------- SPEED DAYS ---------- */
+      hillSprints: {
+        type: "high", focus: "Speed", why: "Top speed is the ceiling for both the 400 and the 800. Short sprints protect it.",
+        track: { title: hill ? "Easy run + hill sprints" : "Easy run + sprints",
+          blocks: [
+            { h: "Run", items: ["Easy run | 25–30 min · [[" + mileR(z.easy) + "]] per mile"] },
+            { h: "Sprints", items: [hill ? "Hill sprints | " + n(8) + " × 10–12 s · all-out · walk down" : "Flat sprints on grass | " + n(8) + " × 10–12 s · walk back + 2 min"] },
+            { h: "Jumps", items: ["Pogo hops | 3 × 10", "Broad jumps | 3 × 3"] }
+          ],
+          feel: "Powerful, never exhausting. If one feels slower than the first, you're done for the day.",
+          why: "Sprint speed is what separates the best 800 runners, and it fades if you only run distance. Ten seconds at a time protects it and costs almost nothing.", src: "Sandford et al. 2019" },
+        gym: { title: "Jumps + heavy legs",
+          blocks: [{ h: "Jumps + throws", items: ["Box jumps | 3 × 3", "Broad jumps | 3 × 3", "Med-ball throw forward | 6 throws"] }, { h: "Lift", items: LIFT(true) }],
+          feel: "Heavy but clean. Every rep looks the same.",
+          why: "Heavy strength work improves running economy and protects you from injury. It can't train sprinting itself — do the track version when you can.", src: "Llanos-Lagos 2024 · Blagrove 2018" },
+        suggest: "track"
+      },
+      topSpeed: {
+        type: "high", focus: "Speed", why: "Your top speed sets the ceiling for everything else. Real sprinting, full rest.",
+        track: { title: "Top speed",
+          blocks: [{ h: "Sprints", items: [
+            "Flying 20 m | " + n(3) + " reps · rest 5–6 min · time it",
+            "Standing 60 m | " + n(2) + " reps · rest 6–8 min · time it"
+          ] }, { h: "Jumps", items: ["Pogo hops | 3 × 10", "Broad jumps | 3 × 3"] }],
+          feel: "Every rep should feel like your fastest. If the next is slower than the first, stop. Any hamstring tightness — stop and go jog.",
+          why: "A 53-second 400 runner has a far higher 800 ceiling than a 58-second one, so top speed gets protected all year.", src: "Sandford et al. 2019 · Francis / ALTIS" },
+        gym: { title: "Jumps + heavy legs",
+          blocks: [{ h: "Jumps + throws", items: ["Box jumps | 3 × 3", "Broad jumps | 3 × 3", "Med-ball throw forward | 6 throws"] }, { h: "Lift", items: LIFT(true) }],
+          feel: "Heavy but clean.",
+          why: "Strength helps, but top speed only gets trained by sprinting. Do the track version when you can.", src: "Llanos-Lagos 2024" },
+        suggest: "track"
+      },
+
+      /* ---------- 400 DAYS ---------- */
+      hills: {
+        type: "high", focus: "400 day", why: "Strength-endurance for the back half of the 400 and the second lap of the 800.",
+        track: { title: hill ? "Hill repeats" : "Strong 45s",
+          blocks: [{ h: "Main set", items: [hill
+            ? "Hill repeats | " + n(7) + " × 45 s · strong, about mile-race effort · jog down"
+            : "Strong 45s | " + n(7) + " × 45 s · about [[" + rng(z.fast[0], z.fast[1]) + "]] per lap pace · jog 90 s"] }],
+          feel: "Breathing hard at the top, recovered by the bottom. If you're not, take an extra minute.",
+          why: "Builds the engine and leg strength at once. Uphill is easier on your hamstrings than the same effort on the flat.", src: "Francis / ALTIS practice" },
+        gym: { title: "Bike sprints + power",
+          blocks: [{ h: "Bike", items: ["Bike sprints | " + n(5) + " × 30 s all-out · 4 min easy between"] }, { h: "Power", items: ["Box jumps | 3 × 3", "Kettlebell swings | 3 sets of 10"] }],
+          feel: "The last 10 seconds of each sprint should burn.",
+          why: "Works the same energy system as the end of a 400. The track version is better — use this when you can't run.", src: "Spencer & Gastin 2001" },
+        suggest: "track"
+      },
+      fast150s: {
+        type: "high", focus: "400 day", why: "Speed endurance — staying fast when it starts to hurt. This is the 400.",
+        track: { title: "Fast 150s",
+          blocks: [{ h: "Main set", items: ["Fast 150s | " + n(5) + " × 150 m · [[" + fmt(at(z.p400, 150) + 1, true) + "]] each · walk 5 min · time it"] }],
+          feel: "Fast and relaxed. The rest is long on purpose — every rep should be just as quick.",
+          why: "The 400 is mostly anaerobic. Short, fast reps at race pace teach you to hold speed without tying up.", src: "Spencer & Gastin 2001 · Francis" },
+        gym: { title: "Bike sprints + power",
+          blocks: [{ h: "Bike", items: ["Bike sprints | " + n(5) + " × 30 s all-out · 4 min easy between"] }, { h: "Power", items: ["Box jumps | 3 × 3", "Kettlebell swings | 3 sets of 10"] }],
+          feel: "The last 10 seconds of each should burn.",
+          why: "Same energy system as the end of a 400. The track version is better.", src: "Spencer & Gastin 2001" },
+        suggest: "track"
+      },
+      fast200s: {
+        type: "high", focus: "400 day", why: "Running faster than 800 pace makes 800 pace feel slow. This is your 400 speed.",
+        track: { title: "Fast 200s",
+          blocks: [{ h: "Main set", items: ["Fast 200s | " + n(5) + " × 200 m · [[" + fmt(at(z.p400, 200) + 1, true) + "]] each · walk 4 min · time it"] }],
+          feel: "Fast and smooth, not straining. The long rest keeps every rep quick.",
+          why: "This is where your 400 speed becomes an 800 weapon — the quality the research says separates the best 800 runners.", src: "Sandford et al. 2019" },
+        gym: { title: "Bike sprints + power",
+          blocks: [{ h: "Bike", items: ["Bike sprints | " + n(5) + " × 30 s all-out · 4 min easy between"] }, { h: "Power", items: ["Box jumps | 3 × 3", "Kettlebell swings | 3 sets of 10"] }],
+          feel: "Hard and short. Full recovery between.",
+          why: "Same energy system as the 400. Use the track version whenever you can.", src: "Spencer & Gastin 2001" },
+        suggest: "track"
+      },
+      race400: {
+        type: "high", focus: "400 day", why: "Race practice for the 400: the last 100 when your legs are heavy.",
+        track: { title: "300 + 100s",
+          blocks: [{ h: "Main set", items: ["300 + 100 | " + n(2) + " sets · 300 m in [[" + fmt(at(z.g400, 300) + 0.5, true) + "]], rest 60 s, then 100 m fast · 12–15 min between sets · time it"] }],
+          feel: "That 100 is supposed to hurt. Stay tall, drive your arms, keep your face loose.",
+          why: "Special endurance: the closest thing to the end of a 400 without racing one. Very few reps, very long rest.", src: "Francis · Spencer & Gastin 2001" },
+        gym: { title: "Bike sprints",
+          blocks: [{ h: "Bike", items: ["Bike sprints | 4 × 40 s all-out · 5 min easy between"] }],
+          feel: "Very hard, very short.",
+          why: "Close to race demands. The track version is better.", src: "Spencer & Gastin 2001" },
+        suggest: "track"
+      },
+
+      /* ---------- 800 DAYS ---------- */
+      thresh: {
+        type: "high", focus: "800 day", why: "Builds the engine — the pace you can hold without blowing up. Your biggest opportunity.",
+        track: { title: "Comfortably hard 1000s",
+          blocks: [{ h: "Main set", items: ["1000 m repeats | " + n(5) + " × 1000 m · [[" + rng(at(z.thresh[0], 1000), at(z.thresh[1], 1000)) + "]] each (" + rng(z.thresh[0], z.thresh[1]) + " per lap) · jog 90 s"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          feel: "Three or four words, not a sentence. Gasping means too fast. Can't hold pace on the fourth? Stop at four.",
+          why: "Your 400 and 800 are well ahead of your mile — the engine is what's lagging. The 800 is about two-thirds aerobic.", src: "Haugen et al. 2021 · Spencer & Gastin 2001" },
+        gym: { title: "Bike or rower intervals",
+          blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(5) + " × 4 min hard · 2 min easy"] }],
+          feel: "Comfortably hard — 3–4 words at a time.",
+          why: "Builds the same engine as the track version, without the pounding. Good if your legs are beat up.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      tempo: {
+        type: "high", focus: "800 day", why: "Holding an honest effort without stopping — the second lap of the 800.",
+        track: { title: "Continuous tempo",
+          blocks: [{ h: "Main set", items: ["Continuous tempo | " + n(18) + " min · [[" + mile(z.thresh[1]) + "]] per mile, [[" + fmt(z.thresh[1]) + "]] per lap"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          feel: "Locked in, but you could go a few more minutes at the end. Not a race.",
+          why: "Same job as the 1000s with no breaks.", src: "Haugen et al. 2021" },
+        gym: { title: "Steady bike", blocks: [{ h: "Main set", items: ["Bike or rower intervals | 2 × 10 min hard · 3 min easy"] }], feel: "Comfortably hard.", why: "Same engine, less pounding.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      fast400s: {
+        type: "high", focus: "800 day", why: "The top of your engine — the fastest pace it can supply.",
+        track: { title: "Fast 400s",
+          blocks: [{ h: "Main set", items: ["Fast 400s | " + n(6) + " × 400 m · [[" + rng(z.fast[0], z.fast[1]) + "]] each · jog 2:30 · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          feel: "Hard. The last one should feel tough but like one more was possible. One more than 3 s slow? That was your last.",
+          why: "Turns a fast first lap into a fast whole race.", src: "Haugen et al. 2021" },
+        gym: { title: "Bike or rower intervals", blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(6) + " × 2 min hard · 2 min easy"] }], feel: "Hard but repeatable.", why: "Same idea as the track session.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      pace300s: {
+        type: "high", focus: "800 day", why: "Teaches your legs exactly what goal 800 pace feels like.",
+        track: { title: "Goal-pace 300s",
+          blocks: [{ h: "Main set", items: ["Goal-pace 300s | " + n(6) + " × 300 m · [[" + fmt(at(z.g800, 300)) + "]] each · walk 3 min · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          feel: "The first two feel almost too easy. The last two feel like racing. Missing pace by the fourth? Run the rest 1–2 s slower rather than resting more.",
+          why: "On race day goal pace becomes a rhythm you already know instead of a guess.", src: "Haugen et al. 2021" },
+        gym: { title: "Bike or rower intervals", blocks: [{ h: "Main set", items: ["Bike or rower intervals | " + n(6) + " × 1 min hard · 2 min easy"] }], feel: "Hard.", why: "Pace work really needs the track. Use this only if you can't get there.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      broken: {
+        type: "high", focus: "800 day", why: "The last 200 of an 800 — tired, out of air, still running fast.",
+        track: { title: "Broken 800s",
+          blocks: [{ h: "Main set", items: ["Broken 800s | " + n(3) + " sets · 400 m in [[" + fmt(z.g800) + "]], rest 45 s, then 200 m in [[" + fmt(at(z.g800, 200) - 1.5) + "]] · 8 min between sets · time it"] }, { h: "Cool down", items: ["Easy jog | 10 min"] }],
+          feel: "That 200 after the short rest is supposed to hurt. That's the point.",
+          why: "The closest thing to racing that isn't a race.", src: "Haugen et al. 2021" },
+        gym: { title: "Bike or rower intervals", blocks: [{ h: "Main set", items: ["Bike or rower intervals | 3 × (90 s hard, 45 s easy, 45 s all-out) · 5 min easy between"] }], feel: "Very hard.", why: "Race-specific work really needs the track.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+
+      /* ---------- EASY + LONG ---------- */
+      easyStrength: {
+        type: "low", focus: "Easy day", why: "Recover from yesterday. Gym day is your strength day this week.",
+        track: { title: "Easy run + strides",
+          blocks: [{ h: "Run", items: ["Easy run | " + (v < 1 ? "20–25" : "30–35") + " min · [[" + mileR(z.easy) + "]] per mile"] }, { h: "Finish", items: ["Strides | 6 × 100 m · about [[" + fmt(z.stride[0], true) + "–" + fmt(z.stride[1], true) + "]] s each · walk back"] }],
+          feel: "Easy has to mean easy. You can talk the whole way.",
+          why: "Most of your running belongs here. Elite distance runners do about 80% of their running at low intensity — and it works because it stays low.", src: "Haugen et al. 2022" },
+        gym: { title: "Easy bike + strength",
+          blocks: [{ h: "Cardio", items: ["Bike or elliptical | 20 min easy"] }, { h: "Lift", items: v < 1 ? ["Box jumps | 2 × 3", "Split squat | 2 sets of 6 each leg · " + L(4)] : LIFT(false) }],
+          feel: "Strong and controlled. Leave the gym feeling like you could do more.",
+          why: "Two strength sessions a week improve running economy and help keep teenage runners healthy.", src: "Blagrove et al. 2018 · Llanos-Lagos 2024" },
+        suggest: v < 1 ? "track" : "gym"
+      },
+      strides: {
+        type: "low", focus: "Easy day", why: "Easy running plus a little speed so it never fades.",
+        track: { title: "Easy run + strides",
+          blocks: [{ h: "Run", items: ["Easy run | " + (v < 1 ? "20–25" : "30") + " min · [[" + mileR(z.easy) + "]] per mile"] }, { h: "Finish", items: ["Strides | " + (v < 1 ? 4 : 8) + " × 100 m · about [[" + fmt(z.stride[0], true) + "–" + fmt(z.stride[1], true) + "]] s each · walk back"] }],
+          feel: "Fast and smooth, never straining. Tight jaw or shoulders means ease off.",
+          why: "Keeps your top-end speed alive without adding another hard day.", src: "Sandford et al. 2019" },
+        gym: easyGym,
+        suggest: "track"
+      },
+      grass100s: {
+        type: "low", focus: "Easy day", why: "Aerobic work and good form at the same time, with almost no wear on your body.",
+        track: { title: "Easy 100s on grass",
+          blocks: [{ h: "Main set", items: ["Easy 100s on grass | 2 sets of 8 × 100 m · [[" + fmt(at(z.steady[1], 100)) + "–" + fmt(at(z.easy[1], 100)) + "]] s each · walk 30 s, 3 min between sets"] }],
+          feel: "About 70% — controlled and springy.",
+          why: "Safe even in a week that already has two hard days.", src: "Francis / ALTIS practice" },
+        gym: easyGym,
+        suggest: "track"
+      },
+      long: {
+        type: "long", focus: "Long run", why: "Durability. This is what shows up as a stronger second lap.",
+        track: { title: "Long run",
+          blocks: [{ h: "Run", items: ["Long run | " + (v < 1 ? "35–40" : "45–55") + " min · [[" + mileR(z.easy) + "]] per mile · last 5 min can be [[" + mileR(z.steady) + "]]"] }],
+          feel: "Comfortable for the first half hour, honest work at the end.",
+          why: "Your times drop off as races get longer. That points at durability, and this is the session that builds it.", src: "Haugen et al. 2021" },
+        gym: { title: "Long easy cardio", blocks: [{ h: "Cardio", items: ["Bike or elliptical | " + (v < 1 ? 35 : 50) + " min easy"] }], feel: "Easy the whole way.", why: "Same aerobic work, no pounding. Good if something is sore.", src: "Haugen et al. 2022" },
+        suggest: "track"
+      },
+
+      /* ---------- MEET WEEK ---------- */
+      sharpSpeed: {
+        type: "high", focus: "Last speed day", why: "Short and sharp. You can't get fitter this week, only fresher.",
+        track: { title: "Sharp speed",
+          blocks: [{ h: "Sprints", items: ["Flying 20 m | 2 reps · rest 5 min · time it", "Goal-pace 150s | 2 × 150 m · [[" + fmt(at(z.g800, 150), true) + "]] each · walk back"] }],
+          feel: "Quick and light. Leave feeling like you could do far more.",
+          why: "Keeps the speed and rhythm in your legs while you recover.", src: "Haugen et al. 2021" },
+        gym: { title: "Light + fast", blocks: [{ h: "Power", items: ["Box jumps | 3 × 2", "Bike | 15 min easy"] }], feel: "Easy.", why: "Stay fresh.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      shortSharp: {
+        type: "high", focus: "Short + sharp", why: "A few short reps at goal pace keep the rhythm while you recover.",
+        track: { title: "Short sharp session",
+          blocks: [{ h: "Main set", items: ["Goal-pace 150s | 3 × 150 m · [[" + fmt(at(z.g800, 150), true) + "]] each · walk back, full rest"] }],
+          feel: "Quick and light. Sharper leaving than arriving.",
+          why: "The last week before a big meet is about staying sharp without spending anything.", src: "Haugen et al. 2021" },
+        gym: { title: "Easy bike", blocks: [{ h: "Cardio", items: ["Bike or elliptical | 15 min easy"] }], feel: "Easy.", why: "Stay fresh.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      easyShort: {
+        type: "low", focus: "Easy day", why: "Loose and fresh.",
+        track: { title: "Short easy run", blocks: [{ h: "Run", items: ["Easy run | 20 min · [[" + mileR(z.easy) + "]] per mile"] }, { h: "Finish", items: ["Strides | 4 × 100 m · walk back"] }],
+          feel: "Better at the end than the start.", why: "Moves blood through your legs without adding any tiredness.", src: "Haugen et al. 2021" },
+        gym: { title: "Easy bike", blocks: [{ h: "Cardio", items: ["Bike or elliptical | 20 min easy"] }], feel: "Easy.", why: "Same thing, no pounding.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      },
+      preMeet: {
+        type: "low", focus: "Day before the meet", why: "Wake the legs up. Home inside 40 minutes.",
+        track: { title: "Pre-meet", blocks: [{ h: "", items: ["Easy run | 10 min + drills", "Goal-pace 200s | 2 × 200 m · [[" + fmt(at(z.g800, 200)) + "]] · walk 3 min", "Strides | 4 × 100 m building to fast"] }],
+          feel: "You should leave feeling like you could have done far more. That's exactly right.",
+          why: "The day before a race you can't get fitter, only more tired. Nothing new today — no new shoes, drills or food.", src: "Haugen et al. 2021" },
+        gym: { title: "Pre-meet", blocks: [{ h: "", items: ["Bike or elliptical | 15 min easy", "Strides | 4 × 100 m somewhere flat, if you can"] }], feel: "Easy.", why: "Stay fresh.", src: "Haugen et al. 2021" },
+        suggest: "track"
+      }
+    };
+    return Object.assign({ key }, S[key]);
   }
-  el('paceWrap').innerHTML = '<h3>My Paces</h3>'
-    + '<p class="sub">Worked out from your own times. Change a personal best up top and these all move.</p>'
-    + '<table><thead><tr><th>Pace</th><th class="r">Per Lap</th><th class="r">Per Mile / 200</th></tr></thead><tbody>'
-    + body + '</tbody></table>';
-}
 
-function renderRace(z){
-  el('raceWrap').innerHTML = '<h3>Race Plan &mdash; '+T(z.g800*2)+'</h3>'
-    + '<p class="sub">Learn these four numbers. Controlled through 600, brave for the last 200.</p>'
-    + '<div class="splits">'
-    + '<div class="split"><div class="s-t">'+T(at(z.g800,200)-1.5)+'</div><div class="s-l">200</div></div>'
-    + '<div class="split"><div class="s-t">'+T(z.g800-1)+'</div><div class="s-l">400</div></div>'
-    + '<div class="split"><div class="s-t">'+T(at(z.g800,600)+1)+'</div><div class="s-l">600</div></div>'
-    + '<div class="split"><div class="s-t">'+T(z.g800*2)+'</div><div class="s-l">Finish</div></div></div>'
-    + '<p class="sub" style="margin:14px 0 0">If the 400 split feels hard, you went out too fast. That is the one to get right.</p>';
-}
+  /* ================= blocks ================= */
+  // Mon speed · Tue easy (+ strength in the gym) · Wed 400 · Thu easy · Fri 800 · Sat long · Sun off.
+  // Never two hard days in a row; at least one full day off (Youth Running Consensus 2021).
 
-el('resetBtn').addEventListener('click', function(){
-  pinned=null; doneToday=false; openDay=0;
-  store.set('titus.pinned','');
+  const BLOCKS = [
+    { name: "Build the engine", min: 20, max: 999,
+      blurb: "Far out. Mostly aerobic, with short hill sprints to keep your speed.",
+      week: (alt) => ["hillSprints", "easyStrength", "hills", "strides", "thresh", "long"] },
+    { name: "Engine + speed", min: 12, max: 19,
+      blurb: "Still building the engine, now with real 400 speed endurance once a week.",
+      week: (alt) => ["hillSprints", "easyStrength", "fast150s", "strides", alt ? "fast400s" : "thresh", "long"] },
+    { name: "Turn speed into races", min: 6, max: 11,
+      blurb: "Race-pace work for both events. Top speed comes back every week.",
+      week: (alt) => ["topSpeed", "easyStrength", "fast200s", "strides", alt ? "thresh" : "pace300s", "long"] },
+    { name: "Sharpen", min: 2, max: 5,
+      blurb: "Less volume, more race-like. Sessions start to look like pieces of an actual 400 and 800.",
+      week: (alt) => ["topSpeed", "easyStrength", "race400", "grass100s", "broken", "long"] },
+    { name: "Almost there", min: 1, max: 1,
+      blurb: "One more week of quality, a bit shorter, so you arrive fresh.",
+      week: (alt) => ["topSpeed", "easyStrength", "fast200s", "strides", "pace300s", "easyShort"], v: 0.7 }
+  ];
+
+  // Meet week, built backward from the meet date.
+  const COMP = [
+    { off: -5, key: "sharpSpeed" }, { off: -4, key: "easyShort" }, { off: -3, key: "shortSharp" },
+    { off: -2, key: "easyShort" }, { off: -1, key: "preMeet" }, { off: 0, key: "race" }, { off: 1, key: "off" }
+  ];
+
+  const RACE = { key: "race", type: "race", focus: "Meet day", why: "Nothing new today. Warm up like you always do. Race plans are below." };
+  const OFF = { key: "off", type: "rest", focus: "Day off", why: "No running, no lifting. The day your body does the building." };
+
+  function weekPlan(weekStart, meet, z, o) {
+    const k = Math.round(daysBetween(weekStart, monday(meet)) / 7);
+    if (k < 0) return { k, name: "Meet is done", sub: "Set your next big meet in Settings.", blurb: "", sessions: [] };
+
+    let block = BLOCKS.find((b) => k >= b.min && k <= b.max);
+    let sessions = [];
+    if (k === 0) block = { name: "Meet week", blurb: "Taper. Nothing new, nothing heavy, nothing long. Show up fresh.", week: BLOCKS[4].week, v: 0.6 };
+    const keys = block.week(k % 2 === 1);
+    keys.forEach((key, d) => { sessions.push(Object.assign(SESSION(key, z, o, block.v || 1), { day: d })); });
+
+    if (k === 0) {
+      const cutoff = addDays(meet, -5);
+      sessions = sessions.filter((s) => addDays(weekStart, s.day) < cutoff);
+      COMP.forEach((c) => {
+        const idx = daysBetween(weekStart, addDays(meet, c.off));
+        if (idx < 0 || idx > 6) return;
+        const base = c.key === "race" ? RACE : c.key === "off" ? OFF : SESSION(c.key, z, o, 0.8);
+        sessions.push(Object.assign({}, base, { day: idx }));
+      });
+    }
+    const sub = k === 0 ? "Meet: " + DAYS_LONG[(meet.getDay() + 6) % 7] + " " + short(meet) : k + (k === 1 ? " week" : " weeks") + " to your big meet (" + short(meet) + ")";
+    return { k, name: block.name, blurb: block.blurb, sub, sessions, comp: k === 0 };
+  }
+
+  /* ================= state ================= */
+
+  let meetStr = load("titus.meet2", "") || (() => { try { return localStorage.getItem("titus.meet") || ""; } catch (e) { return ""; } })();
+  if (!meetStr) meetStr = iso(addDays(new Date(), 84));
+  let prsRaw = load("titus.prs", null) || {};
+  if (prsRaw.pg && !prsRaw.pg8) prsRaw.pg8 = prsRaw.pg;   // older version called goal 800 "pg"
+  let opts = load("titus.opts", {}) || {};
+  let choices = load("titus.choices", {});
+  let done = load("titus.done", {});
+  let shifts = load("titus.shifts", {});
+  let times = load("titus.times", {});
+  let viewStart = monday(new Date());
+  let selDay = (new Date().getDay() + 6) % 7;
+  let currentPlan = null;
+
+  Object.keys(FIELDS).forEach((id) => { $(id).value = prsRaw[id] || DEFAULTS[id]; });
+  $("hill").value = opts.hill || "yes";
+  $("meet").value = meetStr;
+
+  function readPRs() {
+    const pr = {}, raw = {};
+    Object.keys(FIELDS).forEach((id) => {
+      raw[id] = $(id).value;
+      const v = parseT($(id).value);
+      pr[FIELDS[id]] = v > 0 ? v : parseT(DEFAULTS[id]);
+    });
+    save("titus.prs", raw);
+    return pr;
+  }
+
+  /* ================= shifting ================= */
+
+  const isHard = (s) => s && (s.type === "high" || s.type === "race");
+  const canShift = (plan) => !plan.comp && plan.k > 0;
+
+  function baseByDay(plan) {
+    const byDay = [null, null, null, null, null, null, null];
+    plan.sessions.forEach((s) => { byDay[s.day] = s; });
+    return byDay;
+  }
+  function sessionsByDay(plan) {
+    const base = baseByDay(plan);
+    const sh = shifts[iso(viewStart)];
+    if (!sh || !canShift(plan)) return base;
+    const byId = {};
+    base.forEach((s) => { if (s) byId[s.day] = s; });
+    return sh.days.map((id) => (id === null || id === undefined) ? null : (byId[id] || null));
+  }
+  function placeOnce(q, from, prevHigh) {
+    const slots = [null, null, null, null, null, null, null];
+    const left = q.slice();
+    let ph = prevHigh;
+    for (let d = from; d <= 6 && left.length; d++) {
+      const highOk = !ph && d <= 5;
+      let pick = (left[0].type !== "high" || highOk) ? 0 : left.findIndex((x) => x.type !== "high");
+      if (pick === -1) { ph = false; continue; }
+      const s = left.splice(pick, 1)[0];
+      slots[d] = s;
+      ph = s.type === "high";
+    }
+    return { slots, left };
+  }
+  function layOut(queue, from, prevHigh) {
+    let best = null, q = queue.slice();
+    const dropped = [];
+    for (;;) {
+      const r = placeOnce(q, from, prevHigh);
+      const highs = r.slots.filter((x) => x && x.type === "high").length;
+      const lows = r.slots.filter((x) => x && x.type !== "high").length;
+      if (!best || highs > best.highs || (highs === best.highs && lows > best.lows)) best = { highs, lows, slots: r.slots, skipped: r.left.concat(dropped) };
+      const lowIdx = q.map((x) => x.type !== "high").lastIndexOf(true);
+      if (lowIdx <= 0) break;
+      dropped.push(q.splice(lowIdx, 1)[0]);
+    }
+    return best;
+  }
+  function didSomething(dateIso) { return Object.keys(done).some((k) => k.indexOf(dateIso + "|") === 0); }
+  function doToday(plan, chosen) {
+    const todayIdx = (new Date().getDay() + 6) % 7;
+    const current = sessionsByDay(plan);
+    const yest = todayIdx > 0 ? current[todayIdx - 1] : null;
+    const yDone = yest && didSomething(iso(addDays(viewStart, todayIdx - 1)));
+    const rest = current.slice(todayIdx).filter((x) => x && x !== chosen && x.track);
+    const { slots, skipped } = layOut([chosen].concat(rest), todayIdx, !!(yest && yest.type === "high" && yDone));
+    const days = current.map((x, i) => i < todayIdx ? (x && x !== chosen ? x.day : null) : (slots[i] ? slots[i].day : null));
+    shifts[iso(viewStart)] = { days, skipped: skipped.map((x) => x.track ? x.track.title : x.focus) };
+    save("titus.shifts", shifts);
+    selDay = todayIdx;
+    render();
+  }
+
+  /* ================= render ================= */
+
+  const choiceFor = (date, s) => choices[iso(date)] || s.suggest || "track";
+  const stepCount = (v) => v ? v.blocks.reduce((n, b) => n + b.items.length, 0) : 0;
+  function isDayDone(date, s) {
+    if (!s || !s.track) return false;
+    const c = choiceFor(date, s), n = stepCount(s[c]);
+    for (let i = 0; i < n; i++) if (!done[iso(date) + "|" + c + "|" + i]) return false;
+    return n > 0;
+  }
+
+  // Bold the first number group; [[...]] becomes a red target pace.
+  const doseHTML = (d) => {
+    const parts = String(d).split(/\[\[|\]\]/);
+    return parts.map((p, i) => i % 2 ? '<span class="pace">' + esc(p) + "</span>"
+      : (i === 0 ? esc(p).replace(/(\d+(?:–\d+)?(?:\s?×\s?\d+(?:–\d+)?)?(?:\s?(?:sets? of \d+(?:–\d+)?|sets|reps|runs|throws|min|m|s)\b)?)/, "<b>$1</b>") : esc(p))).join("");
+  };
+
+  function timeHTML(id, name) {
+    const mine = times[id] ? times[id].v : "";
+    const prev = Object.keys(times).filter((k) => k !== id && times[k].n === name && parseT(times[k].v) > 0).map((k) => parseT(times[k].v));
+    const best = prev.length ? Math.min.apply(null, prev) : null;
+    return '<div class="timer"><label>Best rep today <input type="text" inputmode="decimal" placeholder="time" data-time="' + esc(id) + '" data-name="' + esc(name) + '" value="' + esc(mine) + '"></label>' +
+      (best !== null ? "<span>Your best so far: <b>" + esc(fmt(best, true)) + "</b></span>" : mine ? "<span>Saved. Beat it next time.</span>" : "<span>First time? Write it down.</span>") + "</div>";
+  }
+
+  function render() {
+    const z = zones(readPRs());
+    const o = { hill: $("hill").value };
+    save("titus.opts", o);
+    renderPaces(z);
+    renderRace(z);
+
+    const meet = parseISO(meetStr);
+    const plan = weekPlan(viewStart, meet, z, o);
+    currentPlan = plan;
+
+    const total = 20;   // the plan's longest build
+    $("phaseName").textContent = plan.name;
+    $("phaseSub").textContent = plan.sub;
+    $("phaseBlurb").textContent = plan.blurb;
+    $("phaseBar").style.width = Math.max(4, Math.round(((total - Math.min(total, Math.max(0, plan.k))) / total) * 100)) + "%";
+
+    const thisWeek = iso(viewStart) === iso(monday(new Date()));
+    const range = short(viewStart) + " – " + short(addDays(viewStart, 6));
+    $("weekLbl").innerHTML = thisWeek ? "This week<small>" + esc(range) + "</small>" : esc(range);
+
+    const byDay = sessionsByDay(plan);
+    const todayIso = iso(new Date());
+    $("days").innerHTML = byDay.map((s, i) => {
+      const date = addDays(viewStart, i);
+      const type = s ? s.type : "rest";
+      const cls = [type, i === selDay ? "sel" : "", iso(date) === todayIso ? "today" : "", isDayDone(date, s) ? "alldone" : ""].join(" ");
+      return '<button type="button" data-i="' + i + '" class="' + cls + '">' + DAYS[i] + "<b>" + date.getDate() + '</b><span class="dot"></span></button>';
+    }).join("");
+
+    const hard = byDay.filter((s) => s && s.type === "high").length;
+    $("mix").textContent = plan.sessions.length ? "This week: " + hard + " hard " + (hard === 1 ? "day" : "days") + ", the rest easy, 1 day off." : "";
+
+    renderDay(byDay, plan);
+  }
+
+  function renderDay(byDay, plan) {
+    const date = addDays(viewStart, selDay);
+    const s = byDay[selDay];
+    const box = $("day");
+
+    if (plan.k < 0) { box.innerHTML = '<div class="band rest"><div class="focus">' + esc(plan.name) + '</div><p class="why">' + esc(plan.sub) + "</p></div>"; return; }
+    if (!s || s.key === "off") {
+      box.innerHTML = '<div class="band rest"><div class="kind">' + esc(DAYS_LONG[selDay]) + ' · Day off</div><div class="focus">Day off</div><p class="why">No running and no lifting. Walking or messing about with friends is fine.</p></div>' +
+        '<div class="restmsg"><ul><li>Aim for nine hours of sleep</li><li>Eat real meals</li><li>Feeling restless is normal. Take it anyway.</li></ul></div>';
+      return;
+    }
+
+    const kindWord = { high: "Hard day", low: "Easy day", long: "Easy day", race: "Meet" }[s.type];
+    let html = '<div class="band ' + s.type + '"><div class="kind">' + esc(DAYS_LONG[selDay] + " · " + kindWord) + '</div><div class="focus">' + esc(s.focus) + '</div><p class="why">' + esc(s.why) + "</p></div>";
+
+    if (!s.track) {
+      box.innerHTML = html + '<div class="restmsg"><ul><li>Start your warm-up 45 minutes before your race</li><li>12 min jog, drills, 4 build-ups, spikes on, 2 × 100 m at race pace</li><li>Race plans with your splits are in "Race plans" below</li><li>Cool down 10–15 min no matter how it went, then eat</li></ul></div>';
+      return;
+    }
+
+    const choice = choiceFor(date, s);
+    const v = s[choice];
+    const key = iso(date);
+    const todayIdx = (new Date().getDay() + 6) % 7;
+    const isThisWeek = iso(viewStart) === iso(monday(new Date()));
+    const sh = shifts[iso(viewStart)];
+
+    if (isThisWeek && canShift(plan)) {
+      if (selDay !== todayIdx) {
+        const yest = todayIdx > 0 ? byDay[todayIdx - 1] : null;
+        const yDone = yest && didSomething(iso(addDays(viewStart, todayIdx - 1)));
+        if (s.type === "high" && yest && yest.type === "high" && yDone && yest !== s) {
+          html += '<div class="move blocked">You did a hard day yesterday. Two in a row isn\'t part of the plan — do an easy day today and this one tomorrow.</div>';
+        } else {
+          html += '<div class="move"><button type="button" class="btn ghost movebtn" data-today="1">Make this today\'s workout</button><span>The rest of the week moves to fit, keeping hard days apart.</span></div>';
+        }
+      }
+      if (sh) html += '<div class="move moved"><span>You changed this week' + (sh.skipped && sh.skipped.length ? ". Didn't fit: " + esc(sh.skipped.join(", ")) + "." : ".") + '</span><button type="button" class="linkish" data-undo="1">Undo</button></div>';
+    }
+
+    html += '<div class="choose" role="group" aria-label="Track or gym">' +
+      ["track", "gym"].map((c) => '<button type="button" data-choice="' + c + '" class="' + (c === choice ? "on" : "") + '" aria-pressed="' + (c === choice) + '">' + (c === "track" ? "Track" : "Gym") + "<span>" + (s.suggest === c ? "suggested" : "&nbsp;") + "</span></button>").join("") + "</div>";
+
+    const warm = choice === "gym" ? WARM_GYM : (s.type === "high" ? WARM_RUN : WARM_EASY);
+    html += '<div class="session"><div class="stitle">' + esc(v.title) + "</div>" +
+      '<details class="warm"><summary>Warm-up first</summary><ul>' + warm.map((w) => "<li>" + esc(w) + "</li>").join("") + "</ul></details>";
+
+    let i = 0;
+    v.blocks.forEach((b) => {
+      if (b.h) html += '<div class="bh">' + esc(b.h) + "</div>";
+      b.items.forEach((item) => {
+        const [name, dose] = item.split(" | ");
+        const id = key + "|" + choice + "|" + i;
+        const how = howTo(name);
+        const dist = dose ? ((dose.match(/\d+ m\b/) || [""])[0]) : "";
+        html += '<div class="step' + (done[id] ? " done" : "") + '" data-id="' + esc(id) + '">' +
+          '<button type="button" class="tick" aria-label="Mark done" aria-pressed="' + !!done[id] + '">✓</button>' +
+          '<div><div class="name">' + esc(name) + "</div>" + (dose ? '<div class="dose">' + doseHTML(dose) + "</div>" : "") + "</div>" +
+          (how ? '<button type="button" class="info" aria-label="How to do it">i</button><div class="explain" hidden>' + esc(how) + "</div>" : "<span></span>") +
+          (dose && /time it/i.test(dose) ? timeHTML(id, name + " " + dist) : "") +
+          "</div>";
+        i++;
+      });
+    });
+    if (v.feel) html += '<div class="feel"><b>How it should feel</b>' + esc(v.feel) + "</div>";
+    if (v.why) html += '<div class="whybox"><b>Why</b>' + esc(v.why) + (v.src ? '<br><span class="src">' + esc(v.src) + "</span>" : "") + "</div>";
+    html += "</div>";
+
+    if (selDay < 6) {
+      const next = byDay[selDay + 1];
+      const word = !next || next.key === "off" ? "your day off" : next.type === "high" ? "a hard day (" + next.focus.toLowerCase() + ")" : next.type === "race" ? "meet day" : next.type === "long" ? "your long run" : "an easy day";
+      html += '<p class="next">Tomorrow is ' + esc(word) + ".</p>";
+    }
+    box.innerHTML = html;
+  }
+
+  function renderPaces(z) {
+    const rows = [
+      ["Easy", "You can talk the whole way. Most of your running.", rng(z.easy[0], z.easy[1]), mileR(z.easy) + " /mi"],
+      ["Steady", "Short sentences. End of the long run.", rng(z.steady[0], z.steady[1]), mileR(z.steady) + " /mi"],
+      ["Comfortably hard", "3–4 words at a time. Builds the engine.", rng(z.thresh[0], z.thresh[1]), mileR(z.thresh) + " /mi"],
+      ["Mile pace", "Hard but repeatable. Fast 400s.", rng(z.fast[0], z.fast[1]), rng(at(z.fast[0], 200), at(z.fast[1], 200)) + " /200"],
+      ["Goal 800 pace", "Every 800 race-pace session.", fmt(z.g800), fmt(at(z.g800, 200)) + " /200"],
+      ["400 race pace", "Your weapon. Fast 150s and 200s.", fmt(z.p400, true), fmt(at(z.p400, 200), true) + " /200"],
+      ["Goal 400 pace", "The 300 + 100 session.", fmt(z.g400, true), fmt(at(z.g400, 200), true) + " /200"]
+    ];
+    $("paceWrap").innerHTML = '<p class="hint">Worked out from your times in Settings.</p><table><thead><tr><th>Pace</th><th class="r">Per lap</th><th class="r">Other</th></tr></thead><tbody>' +
+      rows.map((r) => '<tr><td><b>' + r[0] + '</b><div class="zc">' + r[1] + '</div></td><td class="r">' + r[2] + '</td><td class="r">' + r[3] + "</td></tr>").join("") + "</tbody></table>";
+  }
+
+  function renderRace(z) {
+    const g4 = z.g400, g8 = z.g800 * 2;
+    $("raceWrap").innerHTML =
+      "<h2 style=\"font-size:17px;margin:0\">800 — goal " + fmt(g8) + "</h2>" +
+      '<div class="splits"><div class="split"><b>' + fmt(at(z.g800, 200) - 1.5) + '</b><span>200</span></div><div class="split"><b>' + fmt(z.g800 - 1) + '</b><span>400</span></div><div class="split"><b>' + fmt(at(z.g800, 600) + 1) + '</b><span>600</span></div><div class="split"><b>' + fmt(g8) + "</b><span>Finish</span></div></div>" +
+      '<p class="hint">Get out hard enough to be in a good spot, then settle. Controlled through 600, brave for the last 200. If the 400 split feels hard, you went out too fast.</p>' +
+      "<h2 style=\"font-size:17px;margin:14px 0 0\">400 — goal " + fmt(g4, true) + "</h2>" +
+      '<div class="splits"><div class="split"><b>' + fmt(g4 * 0.48, true) + '</b><span>200</span></div><div class="split"><b>' + fmt(g4 * 0.735, true) + '</b><span>300</span></div><div class="split"><b>' + fmt(g4 * 0.265, true) + '</b><span>last 100</span></div><div class="split"><b>' + fmt(g4, true) + "</b><span>Finish</span></div></div>" +
+      '<p class="hint">Fast first 100 out of the blocks, float the back straight (fast but relaxed), drive the last curve, then stay tall and keep your arms going home. Everyone slows down in the last 100 — the one who slows least wins.</p>';
+  }
+
+  /* ================= events ================= */
+
+  $("days").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    selDay = +b.dataset.i;
+    render();
+  });
+
+  $("day").addEventListener("change", (e) => {
+    const t = e.target.closest("input[data-time]");
+    if (!t) return;
+    const v = t.value.trim().replace(",", ".");
+    if (v && parseT(v) > 0) times[t.dataset.time] = { n: t.dataset.name, v };
+    else delete times[t.dataset.time];
+    save("titus.times", times);
+    render();
+  });
+
+  $("day").addEventListener("click", (e) => {
+    if (e.target.closest("input")) return;
+    if (e.target.closest("[data-today]")) { doToday(currentPlan, sessionsByDay(currentPlan)[selDay]); window.scrollTo(0, 0); return; }
+    if (e.target.closest("[data-undo]")) { delete shifts[iso(viewStart)]; save("titus.shifts", shifts); render(); return; }
+    const c = e.target.closest("button[data-choice]");
+    if (c) { choices[iso(addDays(viewStart, selDay))] = c.dataset.choice; save("titus.choices", choices); render(); return; }
+    const step = e.target.closest(".step");
+    if (!step) return;
+    if (e.target.closest(".info")) { const ex = step.querySelector(".explain"); if (ex) ex.hidden = !ex.hidden; return; }
+    if (e.target.closest(".tick") || e.target.closest(".name") || e.target.closest(".dose")) {
+      const id = step.dataset.id;
+      if (done[id]) delete done[id]; else done[id] = true;
+      save("titus.done", done);
+      render();
+    }
+  });
+
+  $("prev").onclick = () => { viewStart = addDays(viewStart, -7); selDay = 0; render(); };
+  $("next").onclick = () => { viewStart = addDays(viewStart, 7); selDay = 0; render(); };
+  const goToday = () => { viewStart = monday(new Date()); selDay = (new Date().getDay() + 6) % 7; render(); };
+
+  $("gearBtn").onclick = () => { $("settings").hidden = !$("settings").hidden; if (!$("settings").hidden) $("settings").scrollIntoView({ behavior: "smooth" }); };
+  $("todayBtn").onclick = () => { goToday(); window.scrollTo(0, 0); };
+  $("resetBtn").onclick = () => {
+    for (let d = 0; d < 7; d++) { const p = iso(addDays(viewStart, d)) + "|"; Object.keys(done).forEach((k) => { if (k.indexOf(p) === 0) delete done[k]; }); }
+    save("titus.done", done); render();
+  };
+  $("meet").addEventListener("change", () => { if (!$("meet").value) return; meetStr = $("meet").value; save("titus.meet2", meetStr); render(); });
+  $("hill").addEventListener("change", render);
+  Object.keys(FIELDS).forEach((id) => { $(id).addEventListener("change", render); });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") render(); });
+
   render();
-});
-var watch=['date','eq','hill'];
-for(var w=0;w<watch.length;w++){ el(watch[w]).addEventListener('change', render); }
-for(var f in FIELDS){ el(f).addEventListener('change', render); el(f).addEventListener('blur', render); }
-render();
+})();
 </script>
 </body>
 </html>

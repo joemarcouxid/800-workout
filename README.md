@@ -1,33 +1,37 @@
-# Titus — Speed-Type 800
+# Titus — 400 / 800 Plan
 
-A single-page phone app for a high-school 800 m runner. Enter your next meet date and it shows the **next seven days** of training, day by day, adjusting to how far out the meet is. Every target time is calculated from your own PRs, so the plan updates itself as you improve.
+A single-page phone app for a high-school runner doing both the 400 and the 800. Set your next big meet and your PRs once; the app shows one week at a time, one day at a time, with target times worked out from your own PRs.
 
-## Who it's built for
+## How a week works
 
-A **speed-type 800 runner**: sprint speed well ahead of the aerobic engine (24.91 / 53.78 / 2:04.23 against a 5:04 mile). The plan protects the speed and builds the engine, not the other way round. The classification comes from Sandford et al.'s speed / hybrid / endurance subgroups for 800 m runners.
+| Day | What | Type |
+|-----|------|------|
+| Mon | Speed (hill sprints → top speed) | Hard |
+| Tue | Easy — Gym version is the strength day | Easy |
+| Wed | 400 day (hill repeats → fast 150s → fast 200s → 300 + 100s) | Hard |
+| Thu | Easy run + strides | Easy |
+| Fri | 800 day (1000s / fast 400s → goal-pace 300s → broken 800s) | Hard |
+| Sat | Long run | Easy |
+| Sun | Off | Rest |
 
-## What it does
+Never two hard days in a row, at least one full day off.
 
-**Works out your paces.** Enter five times once (200, 400, 800, mile, goal 800). Easy, steady, comfortably-hard and mile pace are derived from the mile PR; race and goal paces from the 800; the fast 200s from the 400. Every session then prints real target times rather than percentages.
+**Track or Gym, every day.** Pick one. The suggested one is marked. Gym versions use a normal weight room and a bike or rower; on race-specific days they say plainly that the track version is better.
 
-**Rearranges itself.** Each day is a dropdown; today opens automatically. If you end up doing a different day's session today, open it and tap **"I did this one today instead."** It moves onto today and the rest of the week rebuilds around it — hard days stay apart, the day off stays in, the race stays on the actual meet date, and the day-before-the-meet session only ever lands the day before the meet. If two hard days end up next to each other anyway, the day is flagged.
+**Make this today's workout.** Open any day this week and tap it. That workout moves to today and the rest of the week reflows, keeping hard days apart. Undo puts it back.
 
-**Matches your equipment.** Set *Weights* to full gym, home gym, or nothing, and *Hills* to yes or no. Every strength and hill session rewrites itself: barbell work becomes dumbbell work becomes bodyweight work; hill sprints become flat grass sprints, stairs, or treadmill incline.
+**Tick as you go, time the fast reps.** Every step has a tick and an **i** button explaining how to do it. Reps marked *time it* have a box for your time, and the app shows your best.
 
-**Explains itself.** Every session has a *How it should feel* line and a *Why you are doing it* line with a source tag. No coaching shorthand.
+## The blocks (weeks to your big meet)
 
-## The blocks
-
-| Weeks out | Block | Focus |
-|-----------|-------|-------|
-| 20+ | Build The Engine | Almost all aerobic. Speed kept alive with hill sprints and strides only. |
-| 12–19 | Engine Plus Speed | Adds one mile-pace session. Lifting goes heavier. |
-| 6–11 | Turn Speed Into 800s | Goal-pace running and top-speed work appear. |
-| 3–5 | Sharpen | Broken 800s and race modelling. Volume drops. |
-| 1–2 | Race Weeks | One quality day; the meet is the second hard effort. |
-| 0 | Meet Week | Taper. Nothing new, nothing heavy, nothing long. |
-
-Colour: orange = speed, blue = engine, green = easy, gold = race, grey = rest.
+| Weeks out | Block |
+|-----------|-------|
+| 20+ | Build the engine |
+| 12–19 | Engine + speed |
+| 6–11 | Turn speed into races |
+| 2–5 | Sharpen |
+| 1 | Almost there |
+| 0 | Meet week (built backward from the meet date) |
 
 ## Where it comes from
 
