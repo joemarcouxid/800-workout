@@ -26,8 +26,8 @@ Never two hard days in a row, at least one full day off. The track is flat, so t
 
 | Weeks out | Block |
 |-----------|-------|
-| 20+ | Build the engine |
-| 12–19 | Engine + speed |
+| 20+ | Build fitness |
+| 12–19 | Fitness + speed |
 | 6–11 | Turn speed into races |
 | 2–5 | Sharpen |
 | 1 | Almost there |
